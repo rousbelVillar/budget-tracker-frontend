@@ -6,7 +6,7 @@
         <li v-for="t in transactions" :key="t.id" class="py-2 flex justify-between items-center">
           <div>
             <div class="font-semibold">{{ t.category }} ({{ t.type }})</div>
-            <div class="text-sm text-gray-500">{{ t.date }} — {{ t.description }}</div>
+            <div class="text-sm text-gray-500">{{ t.date}} — {{ t.description }}</div>
           </div>
           <div class="flex gap-4 items-center">
             <span :class="t.type === 'income' ? 'text-green-600' : 'text-red-600'">
@@ -35,7 +35,14 @@
       async fetchTransactions() {
         try {
             const res = await API.get('/transactions', {params: { month: this.month }})
-            this.transactions = res.data;
+            this.transactions = res.data.map(t=>{
+              const non_formated_date = new Date(t.date);
+              const date = non_formated_date.getDate();
+              const month = non_formated_date.getMonth();
+              const year = non_formated_date.getFullYear();
+              t.date = month + '-' + date + '-' + year;
+              return t;
+            });
         } catch (err) {
           console.error(err)
         }
@@ -44,7 +51,7 @@
         if (!confirm('Are you sure?')) return
         try {
           await API.delete(`/transactions/${id}`)
-          this.fetchTransactions()
+          this.fetchTransactions();
         } catch (err) {
           console.error(err)
         }

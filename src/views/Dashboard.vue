@@ -9,7 +9,7 @@
   
       <TransactionForm @submitted="refreshAll" />
       <TransactionList ref="list" :month="selectedMonth" />
-      <SummaryChart :month="selectedMonth" />
+      <SummaryChart ref="summary" :month="selectedMonth" />
     </div>
   </template>
   

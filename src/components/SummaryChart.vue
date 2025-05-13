@@ -77,7 +77,7 @@
           const res = await API.get('/transactions', {
             params: { month: this.month }
           })
-          const transactions = res.data
+           this.transactions = res.data
           // ... (same summary logic)
         } catch (err) {
           console.error('Failed to load summary', err)

@@ -16,20 +16,28 @@
       <input v-model.number="amount" type="number" class="input" required />
     </div>
 
+
     <div>
-      <label class="block">Category</label>
-      <input v-model="category" type="text" class="input" required />
+      <label>Category:</label>
+      <select v-model="selectedDefaultCategory" class="input" placeholder="Default">
+        <option disabled value="">Select a category</option>
+        <option
+          v-for="cat in defaultCategories"
+          :key="cat.name"
+          :value="cat"
+        >
+          {{ cat.icon }} {{ cat.name }}
+        </option>
+      </select>
+      <div class="pt-3">
+        <input v-model="selectedCustomCategory" type="text" class="input" placeholder="Custom"/>
+      </div>
     </div>
 
     <div>
       <label class="block">Description</label>
       <input v-model="description" type="text" class="input" />
     </div>
-
-    <!-- <div>
-      <label class="block">Date</label>
-      <input v-model="date" type="date" class="input" />
-    </div> -->
 
     <button
       type="submit"
@@ -50,35 +58,73 @@ export default {
       type: "expense",
       category: "",
       description: "",
-      //date: new Date().toISOString().split("T")[0],
+      categoryInput: "",
+      selectedDefaultCategory: "",
+      selectedCustomCategory:"",
+      defaultCategories: [],
+      customCategories: []
     };
   },
+  computed: {
+    computedCategory() {
+      return this.categoryMode === 'custom'
+        ? { name: this.categoryInput.trim(), icon: '📝' }
+        : this.selectedDefault;
+    }
+  },
   methods: {
+    async addCustomCategory(category){
+      try {
+        await API.post('/categories',{
+          id: category.id,
+          name: category.name,
+          icon: category.icon,
+          is_default: category.is_default
+        })
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async submitTransaction() {
-      console.log('amount',this.amount);
-      console.log('type',this.type);
-      console.log('category',this.category);
-      console.log('description',this.description)
+      if (!this.computedCategory?.name) {
+        alert('Please select or enter a category.');
+        return;
+      }
+
+      if(!this.computedCategory?.is_default){
+        this.addCustomCategory(this.computedCategory)
+      }
+
       try {
         await API.post("/transactions", {
           amount: this.amount,
           type: this.type,
-          category: this.category,
+          category: this.computedCategory.name,
           description: this.description,
-          //date: this.date,
         });
+
         this.$emit("submitted");
         this.amount = "";
-        this.category = "";
+        this.categoryInput = "";
+        this.selectedDefault = "";
         this.description = "";
       } catch (err) {
         console.error(err);
         alert("Error adding transaction.");
       }
     },
+    async fetchCategories(){
+      const res = await API.get('/categories')
+      this.defaultCategories = res.data.filter(cat=> cat.is_default);
+      this.customCategories = res.data.filter(cat=> !cat.is_default);
+    }
   },
+  mounted(){
+    this.fetchCategories();
+  }
 };
 </script>
+
 
 <style scoped>
 .input {
