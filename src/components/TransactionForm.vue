@@ -61,41 +61,28 @@
 import Button from 'primevue/button';
 import { reactive, ref, onMounted } from 'vue';
 import API from "../api";
-
-interface TransactionFormData{
-  type: "income" | "expense";
-  category:string;
-  description: string;
-  amount:number;
-};
-
-interface Category{
-  name: string;
-  icon: string;
-  is_default: boolean;
-};
+import { TransactionForm } from '../interfaces/Transaction';
+import { Category } from '../interfaces/Category';
 
 const categories = ref<Category[]>([]);
 const show_add_category = ref(false);
-const new_category = reactive<Category>({
-    name: "",
-    icon: "📝",
-    is_default: false
-});
-
-const form = reactive<TransactionFormData>({
+const default_category = {name: "",icon: "📝",is_default: false}
+const new_category = reactive<Category>(default_category);
+const form = reactive<TransactionForm>({
   type: "expense",
   amount:0,
   description:'',
-  category: ""
+  category: ''
 });
 
   const  addCategory =  async () => {
         try {
         const res = await API.post('/categories/add', new_category)
-          show_add_category= false;
-          categories.push(res.data);
-          new_category = "";
+          show_add_category.value= false;
+          categories.value.push(res.data);
+          new_category.icon = default_category.icon;
+          new_category.is_default = default_category.is_default;
+          new_category.name = default_category.name;
         } catch (error) {
           console.error(error);
         }
@@ -110,11 +97,9 @@ const form = reactive<TransactionFormData>({
 
         try {
           await API.post("/transactions/add", form);
-          form.amount = "";
-          form.category = "";
+          form.amount = 0
+          form.category = default_category.name;
           form.description = "";
-          form.category = "";
-
         } catch (err) {
           console.error(err);
           alert("Error adding transaction.");

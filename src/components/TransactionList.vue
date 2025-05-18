@@ -21,45 +21,44 @@
     </div>
   </template>
   
-  <script>
-  import API from '../api'
-  
-  export default {
-    data() {
-      return {
-        transactions: [],
-      }
-    },
-    props: ['month'],
-    methods: {
-      async fetchTransactions() {
-        try {
-            const res = await API.get('/transactions', {params: { month: this.month }})
-            this.transactions = res.data.map(t=>{
-              const non_formated_date = new Date(t.date);
-              const date = non_formated_date.getDate();
-              const month = non_formated_date.getMonth();
-              const year = non_formated_date.getFullYear();
-              t.date = month + '-' + date + '-' + year;
-              return t;
-            });
-        } catch (err) {
-          console.error(err)
-        }
-      },
-      async deleteTransaction(id) {
+  <script lang="ts" setup>
+import { ref, defineProps ,onMounted} from 'vue';
+import API from '../api';
+import { Transaction,} from '../interfaces/Transaction';
+
+const transactions = ref<Transaction[]>([]);
+const props = defineProps<{month: string}>();  
+
+const fetchTransactions = async() => {
+    try {
+        const res = await API.get('/transactions', {params: { month: props.month }})
+        transactions.value = res.data.map(t=>{
+          const non_formated_date = new Date(t.date);
+          const date = non_formated_date.getDate();
+          const month = non_formated_date.getMonth();
+          const year = non_formated_date.getFullYear();
+          t.date = month + '-' + date + '-' + year;
+          return t;
+        });
+    } catch (err) {
+      console.error(err)
+    }
+}
+
+const deleteTransaction = async (id) =>{
         if (!confirm('Are you sure?')) return
         try {
           await API.delete(`/transactions/${id}`)
-          this.fetchTransactions();
+          fetchTransactions();
         } catch (err) {
           console.error(err)
         }
-      },
-    },
-    mounted() {
-      this.fetchTransactions()
-    },
   }
+  
+  onMounted(() => {
+    fetchTransactions()
+  })
+
+
   </script>
   
