@@ -22,7 +22,7 @@
   </template>
   
   <script lang="ts" setup>
-import { ref, defineProps ,onMounted} from 'vue';
+import { ref, defineProps ,onMounted, defineExpose} from 'vue';
 import API from '../api';
 import { Transaction,} from '../interfaces/Transaction';
 
@@ -59,6 +59,9 @@ const deleteTransaction = async (id) =>{
     fetchTransactions()
   })
 
+  defineExpose({
+    fetchTransactions
+  })
 
   </script>
   

@@ -2,42 +2,31 @@
     <div class="max-w-2xl mx-auto p-4">
       <div class="mb-4">
         <label class="block mb-1 font-semibold">Filter by Month</label>
-        <select v-model="selectedMonth" @change="refreshAll" class="input">
-          <option v-for="m in months" :key="m" :value="m">{{ m }}</option>
+        <select v-model="selected_month" @change="refresh_all" class="input">
+          <option v-for="m in generatePast12Months()" :key="m" :value="m">{{ m }}</option>
         </select>
       </div>
   
-      <TransactionForm @submitted="refreshAll" />
-      <TransactionList ref="list" :month="selectedMonth" />
-      <SummaryChart ref="summary" :month="selectedMonth" />
+      <TransactionForm @submitted="refresh_all" />
+      <TransactionList ref="list" :month="selected_month" />
+      <SummaryChart ref="summary" :month="selected_month" />
     </div>
   </template>
   
-  <script>
+  <script lang="ts" setup>
   import TransactionForm from '../components/TransactionForm.vue'
   import TransactionList from '../components/TransactionList.vue'
-  import SummaryChart from '../components/SummaryChart.vue'
+  import SummaryChart from '../components/SummaryChart.vue';
+  import { ref } from 'vue';
+
   
   const getCurrentMonth = () => {
     const now = new Date()
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
   }
-  
-  export default {
-    components: { TransactionForm, TransactionList, SummaryChart },
-    data() {
-      return {
-        selectedMonth: getCurrentMonth(),
-        months: this.generatePast12Months(),
-      }
-    },
-    methods: {
-      refreshAll() {
-        this.$refs.list.fetchTransactions()
-        this.$refs.summary.fetchSummary()
-      },
-      generatePast12Months() {
-        const months = []
+
+  const generatePast12Months=()=>{
+        const months:string[] = []
         const now = new Date()
         for (let i = 0; i < 12; i++) {
           const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
@@ -46,9 +35,15 @@
           months.push(`${year}-${month}`)
         }
         return months
-      },
-    },
+    }
+  const selected_month = ref<string>(getCurrentMonth());
+  const list = ref<InstanceType<typeof TransactionList> | null>(null)
+  const summary = ref<InstanceType<typeof SummaryChart> | null>(null)
+  const refresh_all = ()=>{
+    list.value?.fetchTransactions()
+    summary.value?.fetchSummary()
   }
+
   </script>
   
   <style scoped>
