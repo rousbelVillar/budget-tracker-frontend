@@ -22,7 +22,7 @@
   </template>
   
   <script lang="ts" setup>
-import { ref, defineProps ,onMounted, defineExpose} from 'vue';
+import { ref,onMounted, defineExpose} from 'vue';
 import API from '../api';
 import { Transaction,} from '../interfaces/Transaction';
 
