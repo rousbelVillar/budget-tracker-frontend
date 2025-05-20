@@ -5,61 +5,56 @@
       <div class="grid grid-cols-3 gap-4 text-center">
         <div>
           <div class="text-sm text-gray-500">Income</div>
-          <div class="text-green-600 font-bold text-lg">${{ income.toFixed(2) }}</div>
+          <div class="text-green-600 font-bold text-lg">${{ income().toFixed(2) }}</div>
         </div>
         <div>
           <div class="text-sm text-gray-500">Expenses</div>
-          <div class="text-red-600 font-bold text-lg">${{ expenses.toFixed(2) }}</div>
+          <div class="text-red-600 font-bold text-lg">${{ expenses().toFixed(2) }}</div>
         </div>
         <div>
           <div class="text-sm text-gray-500">Balance</div>
-          <div class="text-blue-600 font-bold text-lg">${{ (income - expenses).toFixed(2) }}</div>
+          <div class="text-blue-600 font-bold text-lg">${{ (income() - expenses()).toFixed(2) }}</div>
         </div>
       </div>
   
-      <div v-if="chartData && chartData.datasets[0].data.length" class="mt-8">
-        <PieChart :chart-data="chartData" />
+      <div v-if="chartData() && chartData().datasets[0].data.length" class="mt-8">
+        <PieChart :chartData="chartData()" />
       </div>
       <div v-else class="mt-4 text-gray-500 text-sm text-center">No expense data to display chart.</div>
     </div>
   </template>
   
-  <script>
-  import API from '../api'
-  import PieChart from './PieChart.vue'
-  
-  export default {
-    components: { PieChart },
-    data() {
-      return {
-        transactions: [],
-      }
-    },
-    props: ['month'],
-    computed: {
-      income() {
-        return this.transactions
+  <script lang="ts" setup>
+import { ref, onMounted, defineExpose} from 'vue';
+import { Transaction } from '../interfaces/Transaction';
+import PieChart from './PieChart.vue'
+import { ChartData } from 'chart.js';
+import API from '../api';
+
+  const transactions = ref<Transaction[]>([]);
+  const props = defineProps<{month: string}>();  
+
+  const income = ()=> {
+        return transactions.value
           .filter(t => t.type === 'income')
           .reduce((sum, t) => sum + t.amount, 0)
-      },
-      expenses() {
-        return this.transactions
+  }
+  const expenses = ()=> {
+        return transactions.value
           .filter(t => t.type === 'expense')
           .reduce((sum, t) => sum + t.amount, 0)
-      },
-      chartData() {
-        const grouped = {}
-  
-        this.transactions.forEach(t => {
+  }
+
+  const chartData=()=>{
+        const grouped:any = {}
+        transactions.value.forEach((t : any)=> {
           if (t.type === 'expense') {
             grouped[t.category] = (grouped[t.category] || 0) + t.amount
           }
         })
-  
         const labels = Object.keys(grouped)
-        const data = Object.values(grouped)
-  
-        return {
+        const data: any = Object.values(grouped)
+        const chartData:ChartData = {
           labels,
           datasets: [
             {
@@ -69,25 +64,22 @@
             },
           ],
         }
-      },
-    },
-    methods: {
-      async fetchSummary() {
+        return chartData
+      }
+  const fetchSummary = async () => {
         try {
           const res = await API.get('/transactions', {
-            params: { month: this.month }
+            params: { month: props.month }
           })
-           this.transactions = res.data
-          // ... (same summary logic)
+           transactions.value = res.data
         } catch (err) {
           console.error('Failed to load summary', err)
         }
-      },
-},
-mounted() {
-  this.fetchSummary()
-}
+    }
 
-  }
+  defineExpose({fetchSummary})
+
+  onMounted(()=> fetchSummary())
+
   </script>
   
