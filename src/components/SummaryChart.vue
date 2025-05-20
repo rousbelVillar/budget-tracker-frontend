@@ -26,10 +26,10 @@
   
   <script lang="ts" setup>
 import { ref, onMounted, defineExpose} from 'vue';
-import API from '../api'
 import { Transaction } from '../interfaces/Transaction';
 import PieChart from './PieChart.vue'
 import { ChartData } from 'chart.js';
+import API from '../api';
 
   const transactions = ref<Transaction[]>([]);
   const props = defineProps<{month: string}>();  
@@ -46,7 +46,7 @@ import { ChartData } from 'chart.js';
   }
 
   const chartData=()=>{
-        const grouped = {}
+        const grouped:any = {}
         transactions.value.forEach((t : any)=> {
           if (t.type === 'expense') {
             grouped[t.category] = (grouped[t.category] || 0) + t.amount
