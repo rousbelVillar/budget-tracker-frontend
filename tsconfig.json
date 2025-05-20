@@ -1,0 +1,12 @@
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "preserve",
+    "types": ["vitest/globals"]
+  },
+  "include": ["src", "test"]
+}

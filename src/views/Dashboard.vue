@@ -36,6 +36,7 @@
         }
         return months
     }
+    
   const selected_month = ref<string>(getCurrentMonth());
   const list = ref<InstanceType<typeof TransactionList> | null>(null)
   const summary = ref<InstanceType<typeof SummaryChart> | null>(null)

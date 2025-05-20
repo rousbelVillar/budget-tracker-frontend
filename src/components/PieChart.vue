@@ -1,10 +1,10 @@
 <template>
     <div>
-      <Pie :data="chartData" />
+      <Pie :data="props.chartData" />
     </div>
   </template>
   
-  <script>
+  <script lang="ts" setup>
   import { Pie } from 'vue-chartjs'
   import {
     Chart as ChartJS,
@@ -16,13 +16,7 @@
   } from 'chart.js'
   
   ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
-  
-  export default {
-    name: 'PieChart',
-    components: { Pie },
-    props: {
-      chartData: Object,
-    },
-  }
+
+  const props = defineProps<{chartData:any}>();    
   </script>
   
