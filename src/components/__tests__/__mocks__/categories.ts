@@ -30,5 +30,11 @@ export const categories_mock : Category[] =[
     id: 5,
     is_default: true,
     name: "Health"
+  },
+    {
+    icon: "💊",
+    id: 5,
+    is_default: false,
+    name: "Paycheck"
   }
 ]

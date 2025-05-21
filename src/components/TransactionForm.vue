@@ -12,8 +12,8 @@
     </div>    
     
     <div>
-      <label class="block">Amount</label>
-      <input v-model.number="form.amount" type="number" class="input" required />
+      <label test-suite="amount" class="block">Amount</label>
+      <input test-suite="amount" v-model.number="form.amount" type="number" class="input" required />
     </div>
 
 
@@ -96,16 +96,15 @@ const form = reactive<TransactionForm>({
 
   const submitTransaction = async () => {
         if (!form.category) {
-          console.log("selected category",form.category)
           alert('Please select or enter a category.');
           return;
         }
 
         try {
           await API.post("/transactions/add", form);
-          form.amount = 0
-          form.category = default_category.name;
-          form.description = "";
+          // form.amount = 0
+          // form.category = default_category.name;
+          // form.description = "";
         } catch (err) {
           console.error(err);
           alert("Error adding transaction.");

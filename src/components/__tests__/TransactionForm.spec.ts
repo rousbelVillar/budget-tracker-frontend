@@ -10,7 +10,10 @@ vi.mock('../../api',()=>({
             if(url === '/categories'){
                 return Promise.resolve({data:categories_mock})
             }
-            return Promise.reject(new Error(`Unknown URL: ${url}`))
+        }),
+        post:vi.fn((url:string)=>{
+            if(url === '/transactions/add')
+                return Promise.resolve({data:{message: 'Transaction added', id: 1}})
         })
     }
 }))   
@@ -48,6 +51,25 @@ describe('TransactionForm.vue',()=>{
         categories_mock.forEach((cat)=>{
             expect(options.some(o => o.text().includes(cat.name))).toBe(true);
         });
+    });
+
+    it('should submit an income transaction', async()=>{
+        const wrapper = mount(TransactionForm);
+        wrapper.find('select[test-suite="select-type"]').setValue('income');
+        wrapper.find('input[test-suite="amount"]').setValue(5000);
+        await flushPromises();
+        expect(API.get).toHaveBeenCalledWith('/categories');
+        wrapper.find('select[test-suite="select-categories"]').setValue('Paycheck');
+        wrapper.find('input[test-suite="input-description"]').setValue('Monthly Payment');
+        wrapper.find('form').trigger('submit');
+        await flushPromises();
+        expect(API.post).toHaveBeenCalledWith('/transactions/add',{
+            type: "income",
+            amount:5000,
+            description:'Monthly Payment',
+            category: 'Paycheck'
+        });
+
     })
 })
 
