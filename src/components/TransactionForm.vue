@@ -5,7 +5,7 @@
   >
     <div>
       <label class="block">Type</label>
-      <select v-model="form.type" class="input" required>
+      <select test-suite="select-type" v-model="form.type" class="input" required>
         <option value="income">Income</option>
         <option value="expense">Expense</option>
       </select>
@@ -19,9 +19,11 @@
 
     <div>
       <label>Category:</label>
-      <select v-model="form.category" class="input" placeholder="Default">
+      <select test-suite="select-categories" v-model="form.category" class="input" placeholder="Default">
         <option disabled value="">Select a category</option>
         <option
+          class="input"
+          test-suite="category-option"
           v-for="cat in categories"
           :key="cat.name"
           :value="cat.name"
@@ -31,25 +33,29 @@
       </select>
 
       <div>
-        <button type="button" class="text-blue-600 underline" @click="show_add_category =!show_add_category">
+        <button 
+         test-suite="button-new-category"
+         type="button" class="text-blue-600 underline" 
+         @click="show_add_category =!show_add_category">
           + Add New Category
         </button>
       </div>
 
       <div v-if="show_add_category" class="flex gap-2 items-center">
-        <input v-model="new_category.name" placeholder="Category name" class="input" />
-        <Button label="Add"  @click="addCategory"severity="success" :disabled="!new_category.name"/>
+        <input test-suite="input-new-category" v-model="new_category.name" placeholder="Category name" class="input" />
+        <Button test-suite="submit-new-category" label="Add"  @click="addCategory"severity="success" :disabled="!new_category.name"/>
       </div>
       </div>
 
     <div>
       <label class="block">Description</label>
-      <input v-model="form.description" type="text" class="input" />
+      <input test-suite="input-description" v-model="form.description" type="text" class="input" />
     </div>
 
     <button
       type="submit"
       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      test-suite="transaction-submit"
     >
       Add Transaction
     </button>
@@ -60,9 +66,9 @@
 
 import Button from 'primevue/button';
 import { reactive, ref, onMounted } from 'vue';
-import API from "../api";
 import { TransactionForm } from '../interfaces/Transaction';
 import { Category } from '../interfaces/Category';
+import API from '../api';
 
 const categories = ref<Category[]>([]);
 const show_add_category = ref(false);
