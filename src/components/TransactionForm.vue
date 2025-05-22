@@ -81,10 +81,10 @@ const form = reactive<TransactionForm>({
   category: ''
 });
 
-  const  addCategory =  async () => {
+  const addCategory =  async () => {
         try {
         const res = await API.post('/categories/add', new_category)
-          show_add_category.value= false;
+          //show_add_category.value= false;
           categories.value.push(res.data);
           new_category.icon = default_category.icon;
           new_category.is_default = default_category.is_default;
@@ -102,9 +102,9 @@ const form = reactive<TransactionForm>({
 
         try {
           await API.post("/transactions/add", form);
-          // form.amount = 0
-          // form.category = default_category.name;
-          // form.description = "";
+          form.amount = 0
+          form.category = default_category.name;
+          form.description = "";
         } catch (err) {
           console.error(err);
           alert("Error adding transaction.");
