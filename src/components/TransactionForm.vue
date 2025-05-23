@@ -102,9 +102,9 @@ const form = reactive<TransactionForm>({
 
         try {
           await API.post("/transactions/add", form);
-          form.amount = 0
-          form.category = default_category.name;
-          form.description = "";
+          // form.amount = 0;
+          // form.category = default_category.name;
+          // form.description = "";
         } catch (err) {
           console.error(err);
           alert("Error adding transaction.");
