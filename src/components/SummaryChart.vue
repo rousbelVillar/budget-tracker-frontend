@@ -25,7 +25,7 @@
   </template>
   
   <script lang="ts" setup>
-import { ref, onMounted, defineExpose} from 'vue';
+import { ref, onMounted} from 'vue';
 import { Transaction } from '../interfaces/Transaction';
 import PieChart from './PieChart.vue'
 import { ChartData } from 'chart.js';

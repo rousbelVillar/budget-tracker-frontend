@@ -22,7 +22,7 @@
   </template>
   
   <script lang="ts" setup>
-import { ref,onMounted, defineExpose} from 'vue';
+import { ref,onMounted} from 'vue';
 import API from '../api';
 import { Transaction,} from '../interfaces/Transaction';
 
@@ -32,7 +32,7 @@ const props = defineProps<{month: string}>();
 const fetchTransactions = async() => {
     try {
         const res = await API.get('/transactions', {params: { month: props.month }})
-        transactions.value = res.data.map(t=>{
+        transactions.value = res.data.map((t: any)=>{
           const non_formated_date = new Date(t.date);
           const date = non_formated_date.getDate();
           const month = non_formated_date.getMonth();
@@ -45,7 +45,7 @@ const fetchTransactions = async() => {
     }
 }
 
-const deleteTransaction = async (id) =>{
+const deleteTransaction = async (id:number) =>{
         if (!confirm('Are you sure?')) return
         try {
           await API.delete(`/transactions/${id}`)
