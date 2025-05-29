@@ -15,7 +15,6 @@ vi.mock('../../api',()=>({
             }
         }),
         post:vi.fn((url:string, data:any)=>{
-            console.log('url',url)
             if(url === '/transactions/add')
                 return Promise.resolve({data:{message: 'Transaction added', id: 1}})
             else if(url=== '/categories/add')
@@ -75,44 +74,46 @@ describe('TransactionForm.vue',()=>{
 
     it('should submit an income transaction', async()=>{
         const wrapper = mount(TransactionForm);
-        const options = Array.from(document.querySelectorAll('.p-select-item'));
 
         await flushPromises();
         expect(API.get).toHaveBeenCalledWith('/categories');
-        wrapper.find('[test-suite="select-type"]').setValue('income');
-        wrapper.find('[test-suite="amount"]').setValue(5000);
-        const selectTrigger = wrapper.find('[test-suite="select-categories"]');
-        await selectTrigger.trigger('click');
-        await flushPromises();
-        const groceriesPaycheck= options.find(opt =>
+        const select_type = wrapper.find('[test-suite="select-type"]');
+        await select_type.trigger('click');
+        const options_type = Array.from(document.querySelectorAll('.p-select-option-label'));
+        const income = options_type.find(opt =>
+        opt.textContent?.includes('Income')
+        );
+        expect(income).toBeTruthy();
+        (income as HTMLElement).click();
+        const select_categories = wrapper.find('[test-suite="select-categories"]');
+        await select_categories.trigger('click');
+        const options_category = Array.from(document.querySelectorAll('.p-select-option-label'));
+        const paycheck = options_category.find(opt =>
         opt.textContent?.includes('Paycheck')
         );
-        expect(groceriesPaycheck).toBeTruthy();
-        (groceriesPaycheck as HTMLElement).click();
-        expect(groceriesPaycheck).toBeTruthy();
-        (groceriesPaycheck as HTMLElement).click();
-        // wrapper.find('[test-suite="select-categories"]').setValue('Paycheck');
-        wrapper.find('[test-suite="input-description"]').setValue('Monthly Payment');
-        await wrapper.find('form').trigger('submit');
-        await flushPromises();
+        expect(paycheck).toBeTruthy();
+        (paycheck as HTMLElement).click();
+        wrapper.find('[name="amount"]').setValue(5000);
+        wrapper.find('[name="description"]').setValue('Monthly Payment');
+        await wrapper.find('form').trigger('submit.prevent');
+        await flushPromises()
         expect(API.post).toHaveBeenCalledWith('/transactions/add',{
             type: "income",
             amount:5000,
             description:'Monthly Payment',
             category: 'Paycheck'
         });
-
     });
 
     it('should submit new category', async()=>{
     const wrapper = mount(TransactionForm);
     await flushPromises();
     expect(API.get).toHaveBeenCalledWith('/categories');
-    const add_category_button = wrapper.find('button[test-suite="button-new-category"]');
+    const add_category_button = wrapper.find('[test-suite="add-new-category"]');
     await add_category_button.trigger('click');
-    await wrapper.find('[test-suite="input-new-category"]').setValue('New test category')
+    await wrapper.find('[name="new_category"]').setValue('New test category')
     await wrapper.find('[test-suite="submit-new-category"]').trigger('click');
-        expect(API.post).toBeCalledTimes(2)
+        expect(API.post).toBeCalledTimes(1)
         expect(API.post).toHaveBeenCalledWith('/categories/add',{
             name:"New test category",
             icon:"📝",
