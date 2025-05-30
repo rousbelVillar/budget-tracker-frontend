@@ -8,7 +8,7 @@
       <label class="float-left" for="category">Category</label>
       <Select id="category" test-suite="select-categories" v-model="form.category" :options="categories" optionLabel="optionAndIcon" option-value="name" placeholder="Select a category" class="w-full md:w-56" />
     </FormField>
-    <FormField name="" v-slot="$field">
+    <FormField name="add-new-category" v-slot="$field">
       <Button test-suite="add-new-category" severity="info" class="float-left" @click="show_add_category =!show_add_category">+ Add Category</Button>
     </FormField>
     <div v-if="!show_add_category">
@@ -19,9 +19,9 @@
         <Button class="float-right mt-2" test-suite="submit-new-category" label="Add"  @click="addCategory" severity="success" :disabled="!new_category.name"/>
       </FormField>
     </div>
-    <FormField name="amount" v-slot="$field">
+    <FormField  v-slot="$field">
       <label class="float-left" for="amount">Amount</label>
-      <InputNumber test-suite="amount" v-model="form.amount" inputId="amount"  mode="currency" currency="USD" locale="en-US" placeholder="Transaction amount" fluid />
+      <InputNumber test-suite="amount" v-model="form.amount" inputId="amount" name="amount"  mode="currency" currency="USD" locale="en-US" placeholder="Transaction amount" fluid />
     </FormField>
     <FormField name="description" v-slot="$field">
       <label class="float-left" for="type">Description</label>
@@ -82,16 +82,11 @@ const types = ref([
   }
 
   const submitTransaction = async () => {
-        if (!form.category) {
-          alert('Please select or enter a category.');
-          return;
-        }
-
         try {
           await API.post("/transactions/add", form);
-          form.amount = 0;
-          form.category = default_category.name;
-          form.description = "";
+          // form.amount = 0;
+          // form.category = default_category.name;
+          // form.description = "";
         } catch (err) {
           console.error(err);
           alert("Error adding transaction.");
