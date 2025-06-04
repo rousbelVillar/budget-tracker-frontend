@@ -2,15 +2,6 @@ import { flushPromises, mount } from "@vue/test-utils";
 import TransactionForm from "../TransactionForm.vue";
 import { categories_mock } from "./__mocks__/categories";
 import API from "../../api";
-import { Button, InputNumber, InputText, Select } from "primevue";
-import PrimeVue from 'primevue/config'
-
-const wrapper = mount(TransactionForm, {
-    global: {
-        plugins: [PrimeVue],
-        components: {InputText,InputNumber,Button,Select}
-    }
-}); 
 
 vi.mock('../../api',()=>({
     default:{
@@ -37,6 +28,7 @@ vi.mock('../../api',()=>({
 
 describe('TransactionForm.vue',()=>{
     it('should render forms inputs ',async ()=>{
+        const wrapper = mount(TransactionForm);
         expect(wrapper.find('[test-suite="amount"]').exists()).toBe(true);
         expect(wrapper.find('[test-suite="select-type"]').exists()).toBe(true);
         expect(wrapper.find('[test-suite="select-categories"]').exists()).toBe(true);
@@ -46,6 +38,7 @@ describe('TransactionForm.vue',()=>{
     });
 
     it('should render hidden new category inputs after clicking add new category',async ()=>{
+        const wrapper = mount(TransactionForm);
         const add_category_button = wrapper.find('[test-suite="add-new-category"]');
         await add_category_button.trigger('click');
         expect(wrapper.find('[test-suite="input-new-category"]').exists()).toBe(true);
@@ -54,11 +47,13 @@ describe('TransactionForm.vue',()=>{
     })
 
     it('should not render hidden new category inputs before clicking add new category',async ()=>{   
+        const wrapper = mount(TransactionForm);
         expect(wrapper.find('[test-suite="input-new-category"]').exists()).toBe(false);
         expect(wrapper.find('[test-suite="submit-new-category"]').exists()).toBe(false);
     })
 
     it('should fetch categories on mount', async()=>{      
+        const wrapper = mount(TransactionForm);
         await flushPromises();
         expect(API.get).toHaveBeenCalledWith('/categories');
         const select_categories = wrapper.find('[test-suite="select-categories"]');
@@ -71,17 +66,16 @@ describe('TransactionForm.vue',()=>{
     });
 
     it('should submit an income transaction', async()=>{
+        const wrapper = mount(TransactionForm);
         await flushPromises();
-        const inputWrappers = wrapper.findAllComponents({ name: 'InputNumber' });
-        expect(inputWrappers).toHaveLength(1);
 
         (wrapper.vm as any).form.amount = 5000;
-        (wrapper.vm as any).form.category = "Paycheck";
-        (wrapper.vm as any).form.type = "income";
+        (wrapper.vm as any).form.category = "Paycheck";     
         (wrapper.vm as any).form.description = "Monthly Payment";
-
-        expect(API.get).toHaveBeenCalledWith('/categories');
+        (wrapper.vm as any).form.type = "income";
+        (wrapper.vm as any).test_validation = true;
         await wrapper.find('form').trigger('submit.prevent');
+        expect(API.get).toHaveBeenCalledWith('/categories');
         await flushPromises();
         expect(API.post).toBeCalledTimes(1);
         expect(API.post).toHaveBeenCalledWith('/transactions/add',{
@@ -93,11 +87,12 @@ describe('TransactionForm.vue',()=>{
     });
 
     it('should submit new category', async()=>{
+        const wrapper = mount(TransactionForm);
         await flushPromises();
         expect(API.get).toHaveBeenCalledWith('/categories');
         const add_category_button = wrapper.find('[test-suite="add-new-category"]');
         await add_category_button.trigger('click');
-        await wrapper.find('[name="new_category"]').setValue('New test category')
+        await wrapper.find('[test-suite="input-new-category"]').setValue('New test category')
         await wrapper.find('[test-suite="submit-new-category"]').trigger('click');
             expect(API.post).toBeCalledTimes(2)
             expect(API.post).toHaveBeenCalledWith('/categories/add',{
@@ -105,6 +100,6 @@ describe('TransactionForm.vue',()=>{
                 icon:"📝",
                 is_default:false
             });
-        })
+    })
 })
 

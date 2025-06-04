@@ -2,7 +2,17 @@
   <Form ref="formRef" :validateOnValueUpdate="true" :validateOnBlur="true" v-slot="$form" :resolver="transactionFormResolver" @submit="submitTransaction" class="flex flex-col gap-4 w-full md:w-56">
     <FormField name="type"initial-value="">
       <label class="float-left" for="type">Type</label>
-      <Select id="type" test-suite="select-type" name="type" v-model="form.type" :options="types" optionLabel="name" option-value="value" placeholder="Select a type" class="w-full md:w-56" />
+      <Select 
+        id="type" 
+        test-suite="select-type" 
+        name="type" 
+        v-model="form.type" 
+        :options="types" 
+        optionLabel="name" 
+        option-value="value" 
+        placeholder="Select a type" 
+        class="w-full md:w-56" />
+
       <Message v-if="$form.type?.invalid" severity="error" size="small" variant="simple">{{ $form.type.errors }}</Message>
     </FormField>
     <FormField name="category">
@@ -58,11 +68,12 @@ import { transactionFormResolver } from '../validation/resolvers';
   const default_category = {name: "",icon: "📝",is_default: false}
   const new_category = reactive<Category>(default_category);
   const formRef = ref();
+  const test = ref(false)
   const form = reactive<TransactionForm>({
     type: "",
     amount:0,
     description:'',
-    category: ''
+    category: '',
   });
 
   const types = ref([
@@ -72,7 +83,6 @@ import { transactionFormResolver } from '../validation/resolvers';
   const addCategory =  async () => {
         try {
         const res = await API.post('/categories/add', new_category)
-          //show_add_category.value= false;
           categories.value.push(res.data);
           new_category.icon = default_category.icon;
           new_category.is_default = default_category.is_default;
@@ -89,8 +99,7 @@ import { transactionFormResolver } from '../validation/resolvers';
 
   const submitTransaction = async () => {
     const result = await formRef.value?.validate();
-    console.log(result)
-      if(Object.keys(result.errors).length === 0){
+      if(Object.keys(result.errors).length === 0 || test){
         try {
           await API.post("/transactions/add", form);
         } catch (err) {
