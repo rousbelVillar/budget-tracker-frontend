@@ -51,6 +51,7 @@
       </Button>
     </FormField>
   </Form>
+  <Toast position="center" />
 </template>
 
 <script lang="ts" setup>
@@ -60,15 +61,14 @@ import { TransactionForm } from '../interfaces/Transaction';
 import { Category } from '../interfaces/Category';
 import API from '../api';
 import { Form, FormField} from '@primevue/forms';
-import {InputText, InputNumber, Select,Button, Message} from 'primevue';
-import { transactionFormResolver } from '../validation/resolvers';
+import {InputText, InputNumber, Select,Button, Message, Toast,useToast} from 'primevue';
+import { mockTransactionResolver, transactionFormResolver } from '../validation/resolvers';
 
   const categories = ref<Category[]>([]);
   const show_add_category = ref(true);
   const default_category = {name: "",icon: "📝",is_default: false}
   const new_category = reactive<Category>(default_category);
   const formRef = ref();
-  const test = ref(false)
   const form = reactive<TransactionForm>({
     type: "",
     amount:0,
@@ -80,18 +80,20 @@ import { transactionFormResolver } from '../validation/resolvers';
       { name: 'Income', value: 'income' },
       { name: 'Expense', value: 'expense' },
   ]);
+  const toast = useToast();
+
   const addCategory =  async () => {
-        try {
-        const res = await API.post('/categories/add', new_category)
-          categories.value.push(res.data);
-          new_category.icon = default_category.icon;
-          new_category.is_default = default_category.is_default;
-          new_category.name = default_category.name;
-          show_add_category.value = !show_add_category.value;
-        } catch (error) {
-          console.error(error);
-        }
-      }
+    try {
+    const res = await API.post('/categories/add', new_category)
+      categories.value.push(res.data);
+      new_category.icon = default_category.icon;
+      new_category.is_default = default_category.is_default;
+      new_category.name = default_category.name;
+      show_add_category.value = !show_add_category.value;
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const cancelAddCategory = ()=>{
       new_category.name = '';
       show_add_category.value = !show_add_category.value;
@@ -99,22 +101,32 @@ import { transactionFormResolver } from '../validation/resolvers';
 
   const submitTransaction = async () => {
     const result = await formRef.value?.validate();
-      if(Object.keys(result.errors).length === 0 || test){
+      if(Object.keys(result.errors).length === 0 || mockTransactionResolver(form)){
         try {
           await API.post("/transactions/add", form);
+          showToast('Transaction submitted successfully.');
         } catch (err) {
           console.error(err);
-          alert("Error adding transaction.");
+          showToast('Error adding transaction.');
         }
       }
     }
 
   const fetchCategories = async() => {
-        const res = await API.get('/categories')
-        categories.value = res.data.map((c:any)=>{
-          const category : Category = {name:c.name,icon:c.icon,is_default:c.is_default,optionAndIcon:c.icon + " " + c.name}
-          return category
-        });
+    const res = await API.get('/categories')
+    categories.value = res.data.map((c:any)=>{
+      const category : Category = {name:c.name,icon:c.icon,is_default:c.is_default,optionAndIcon:c.icon + " " + c.name}
+      return category
+    });
+  }
+
+  const showToast = (msj:string,severity?:string)=>{
+    toast.add({
+      severity: severity ? severity: 'success',
+      summary: msj,
+      //detail: 'This toast appears in the center!',
+      life: 3000
+    });
   }
 
   onMounted(() => {

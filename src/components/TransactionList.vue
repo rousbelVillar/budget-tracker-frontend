@@ -35,7 +35,7 @@ const fetchTransactions = async() => {
         transactions.value = res.data.map((t: any)=>{
           const non_formated_date = new Date(t.date);
           const date = non_formated_date.getDate();
-          const month = non_formated_date.getMonth();
+          const month = non_formated_date.getMonth() +1;
           const year = non_formated_date.getFullYear();
           t.date = month + '-' + date + '-' + year;
           return t;

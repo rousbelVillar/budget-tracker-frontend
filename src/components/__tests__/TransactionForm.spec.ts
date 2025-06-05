@@ -2,31 +2,32 @@ import { flushPromises, mount } from "@vue/test-utils";
 import TransactionForm from "../TransactionForm.vue";
 import { categories_mock } from "./__mocks__/categories";
 import API from "../../api";
+import { mockTransactionResolver, transactionFormResolver } from "../../validation/resolvers";
 
-vi.mock('../../api',()=>({
-    default:{
-        get:vi.fn((url:string)=> {
-            if(url === '/categories'){
-                return Promise.resolve({data:categories_mock})
+    describe('TransactionForm.vue',()=>{
+        beforeEach(()=>{
+            vi.clearAllMocks()
+            vi.mock('../../api',()=>({
+            default:{
+                get:vi.fn((url:string)=> {
+                    if(url === '/categories'){
+                        return Promise.resolve({data:categories_mock})
+                    }
+                }),
+                post:vi.fn((url:string, data:any)=>{
+                    if(url === '/transactions/add')
+                        return Promise.resolve({data:{message: 'Transaction added', id: 1}})
+                    else if(url=== '/categories/add')
+                        return Promise.resolve({data:{
+                            id:1,
+                            name:data.name,
+                            icon: data.icon,
+                            is_default:data.is_default
+                        }})
+                })
             }
-        }),
-        post:vi.fn((url:string, data:any)=>{
-            if(url === '/transactions/add')
-                return Promise.resolve({data:{message: 'Transaction added', id: 1}})
-            else if(url=== '/categories/add')
-                return Promise.resolve({data:{
-                    id:1,
-                    name:data.name,
-                    icon: data.icon,
-                    is_default:data.is_default
-                }})
-        })
-    }
-}))   
-
-
-
-describe('TransactionForm.vue',()=>{
+          }))   
+        });
     it('should render forms inputs ',async ()=>{
         const wrapper = mount(TransactionForm);
         expect(wrapper.find('[test-suite="amount"]').exists()).toBe(true);
@@ -68,12 +69,11 @@ describe('TransactionForm.vue',()=>{
     it('should submit an income transaction', async()=>{
         const wrapper = mount(TransactionForm);
         await flushPromises();
-
         (wrapper.vm as any).form.amount = 5000;
         (wrapper.vm as any).form.category = "Paycheck";     
         (wrapper.vm as any).form.description = "Monthly Payment";
         (wrapper.vm as any).form.type = "income";
-        (wrapper.vm as any).test_validation = true;
+        (wrapper.vm as any).test = true;
         await wrapper.find('form').trigger('submit.prevent');
         expect(API.get).toHaveBeenCalledWith('/categories');
         await flushPromises();
@@ -84,6 +84,81 @@ describe('TransactionForm.vue',()=>{
             description:'Monthly Payment',
             category: 'Paycheck'
         });
+        await flushPromises();
+        wrapper.unmount()
+    });
+
+    it('should submit an expense transaction', async()=>{
+        const wrapper = mount(TransactionForm);
+        await flushPromises();
+        (wrapper.vm as any).form.amount = 1000;
+        (wrapper.vm as any).form.category = "Rent";     
+        (wrapper.vm as any).form.description = "Monthly Rent";
+        (wrapper.vm as any).form.type = "expense";
+        await wrapper.find('form').trigger('submit.prevent');
+        expect(API.get).toHaveBeenCalledWith('/categories');
+        await flushPromises();
+        expect(API.post).toBeCalledTimes(1);
+        expect(API.post).toHaveBeenCalledWith('/transactions/add',{
+            type: 'expense',
+            amount:1000,
+            description:'Monthly Rent',
+            category: 'Rent'
+        });
+        wrapper.unmount()
+    });
+
+    it('should not submit if type is missing.', async()=>{
+        const wrapper = mount(TransactionForm);
+        await flushPromises();
+        (wrapper.vm as any).form.category = "Rent";
+        (wrapper.vm as any).form.description = "Monthly Rent";
+        (wrapper.vm as any).form.amount = 1000;
+        await wrapper.find('form').trigger('submit.prevent');
+        expect(API.get).toHaveBeenCalledWith('/categories');
+        await flushPromises();
+        expect(API.post).toBeCalledTimes(0);
+        wrapper.unmount()
+    });
+
+    it('should not submit if description is missing.', async()=>{
+        const wrapper = mount(TransactionForm);
+        await flushPromises();
+        (wrapper.vm as any).form.amount = 1000;
+        (wrapper.vm as any).form.category = "Rent";     
+        (wrapper.vm as any).form.type = "expense";
+        await wrapper.find('form').trigger('submit.prevent');
+        expect(API.get).toHaveBeenCalledWith('/categories');
+        await flushPromises();
+        expect(API.post).toBeCalledTimes(0);
+        wrapper.unmount()
+    });
+
+    it('should not submit if category is missing.', async()=>{
+        const wrapper = mount(TransactionForm);
+        await flushPromises();
+        (wrapper.vm as any).form.description = "Monthly Rent";
+        (wrapper.vm as any).form.type = "expense";
+        (wrapper.vm as any).form.amount = 1000;
+        await wrapper.find('form').trigger('submit.prevent');
+        expect(API.get).toHaveBeenCalledWith('/categories');
+        await flushPromises();
+        expect(API.post).toBeCalledTimes(0);
+        wrapper.unmount()
+    });
+
+    it('should not submit if amount <=0.', async()=>{
+        const wrapper = mount(TransactionForm);
+        await flushPromises();
+        (wrapper.vm as any).form.amount = 0;
+        (wrapper.vm as any).form.category = "Rent";     
+        (wrapper.vm as any).form.description = "Monthly Rent";
+        (wrapper.vm as any).form.type = "expense";
+        await wrapper.find('form').trigger('submit.prevent');
+        expect(API.get).toHaveBeenCalledWith('/categories');
+        await flushPromises();
+        expect(API.post).toBeCalledTimes(0);
+        wrapper.unmount()
     });
 
     it('should submit new category', async()=>{
@@ -94,7 +169,7 @@ describe('TransactionForm.vue',()=>{
         await add_category_button.trigger('click');
         await wrapper.find('[test-suite="input-new-category"]').setValue('New test category')
         await wrapper.find('[test-suite="submit-new-category"]').trigger('click');
-            expect(API.post).toBeCalledTimes(2)
+            expect(API.post).toBeCalledTimes(1)
             expect(API.post).toHaveBeenCalledWith('/categories/add',{
                 name:"New test category",
                 icon:"📝",
