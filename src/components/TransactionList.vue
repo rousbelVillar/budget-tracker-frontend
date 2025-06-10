@@ -1,30 +1,37 @@
 <template>
-    <div class="bg-white p-6 rounded shadow mt-6">
+    <div class="bg-white p-6 rounded shadow mt-6" style="min-width: 49vw;">
       <h2 class="text-xl font-bold mb-4">Transactions</h2>
       <div v-if="transactions.length === 0">No transactions yet.</div>
-      <ul class="divide-y">
-        <li v-for="t in transactions" :key="t.id" class="py-2 flex justify-between items-center">
-          <div>
-            <div class="font-semibold">{{ t.category }} ({{ t.type }})</div>
-            <div class="text-sm text-gray-500">{{ t.date}} — {{ t.description }}</div>
-          </div>
-          <div class="flex gap-4 items-center">
-            <span :class="t.type === 'income' ? 'text-green-600' : 'text-red-600'">
-              ${{ t.amount.toFixed(2) }}
-            </span>
-            <button @click="deleteTransaction(t.id)" class="text-red-500 hover:underline">
-              Delete
-            </button>
-          </div>
-        </li>
-      </ul>
+      <DataTable :value="transactions" stripedRows paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 20rem">
+        <Column field="type" header="Type">
+            <template #body="slotProps">
+              <Tag :value="slotProps.data.type" :severity="getTypeSeverity(slotProps.data)"></Tag>
+            </template>
+        </Column>
+        <Column field="category" header="Category"/>
+        <Column field="description" header="Description"/>
+        <Column field="amount" header="Amount">
+            <template #body="slotProps">
+              {{ formatCurrency(slotProps.data.amount) }}
+            </template>
+        </Column>
+        <Column field="date" header="Date" style="width: 25%;"/>
+        <Column>
+          <template #body="slotProps">
+            <Button class="mt-2 ml-1 float-right" test-suite="cancel-new-category" label="Remove" size="small" variant="outlined"  @click="deleteTransaction(slotProps.data.id)" severity="danger"/>
+          </template>
+        </Column>
+      </DataTable>
     </div>
   </template>
   
   <script lang="ts" setup>
 import { ref,onMounted} from 'vue';
 import API from '../api';
-import { Transaction,} from '../interfaces/Transaction';
+import { Transaction} from '../interfaces/Transaction';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import { Button, Tag } from 'primevue';
 
 const transactions = ref<Transaction[]>([]);
 const props = defineProps<{month: string}>();  
@@ -53,6 +60,21 @@ const deleteTransaction = async (id:number) =>{
         } catch (err) {
           console.error(err)
         }
+  }
+
+  const formatCurrency = (value:any) => {
+    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  };
+
+  const getTypeSeverity = (transaction:any)=>{
+      switch(transaction.type){
+        case 'expense':
+          return 'warn';
+        case 'income':
+          return 'success'
+        default :
+        return ''
+      }
   }
   
   onMounted(() => {

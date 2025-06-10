@@ -61,7 +61,7 @@ import { TransactionForm } from '../interfaces/Transaction';
 import { Category } from '../interfaces/Category';
 import API from '../api';
 import { Form, FormField} from '@primevue/forms';
-import {InputText, InputNumber, Select,Button, Message, Toast,useToast} from 'primevue';
+import {InputText, InputNumber, Select,Button, Message,Toast, useToast} from 'primevue';
 import { mockTransactionResolver, transactionFormResolver } from '../validation/resolvers';
 
   const categories = ref<Category[]>([]);

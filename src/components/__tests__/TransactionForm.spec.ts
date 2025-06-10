@@ -44,7 +44,7 @@ import { mockTransactionResolver, transactionFormResolver } from "../../validati
         await add_category_button.trigger('click');
         expect(wrapper.find('[test-suite="input-new-category"]').exists()).toBe(true);
         expect(wrapper.find('[test-suite="submit-new-category"]').exists()).toBe(true);
-        await add_category_button.trigger('click');//hiding it back
+        await add_category_button.trigger('click');//hiding it.
     })
 
     it('should not render hidden new category inputs before clicking add new category',async ()=>{   
