@@ -11,7 +11,7 @@ export interface Transaction{
 };
 
 export interface TransactionForm{
-  type: "income" | "expense";
+  type: "income" | "expense" | "";
   category:string;
   description: string;
   amount:number;
