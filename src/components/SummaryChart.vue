@@ -17,8 +17,8 @@
         </div>
       </div>
   
-      <div v-if="chartData() && chartData().datasets[0].data.length" class="mt-8">
-        <PieChart :chartData="chartData()" />
+      <div v-if="getChartData() && getChartData().datasets[0].data.length" class="mt-8">
+        <PieChart :chartData="getChartData()" />
       </div>
       <div v-else class="mt-4 text-gray-500 text-sm text-center">No expense data to display chart.</div>
     </div>
@@ -26,60 +26,69 @@
   
   <script lang="ts" setup>
 import { ref, onMounted} from 'vue';
-import { Transaction } from '../interfaces/Transaction';
 import PieChart from './PieChart.vue'
 import { ChartData } from 'chart.js';
-import API from '../api';
+import { useTransactionStore } from '../store/Transactions';
 
-  const transactions = ref<Transaction[]>([]);
-  const props = defineProps<{month: string}>();  
+  const props = defineProps<{month: string}>();
+  const chartData = ref();
+  const chartOptions = ref();  
+  const store = useTransactionStore()
+  
+  onMounted(() => {
+      store.fetchTransactions(props.month)
+      chartData.value = getChartData();
+      chartOptions.value = setChartOptions();
+  });
 
   const income = ()=> {
-        return transactions.value
+        return store.transactions
           .filter(t => t.type === 'income')
           .reduce((sum, t) => sum + t.amount, 0)
   }
   const expenses = ()=> {
-        return transactions.value
+        return store.transactions
           .filter(t => t.type === 'expense')
           .reduce((sum, t) => sum + t.amount, 0)
   }
 
-  const chartData=()=>{
-        const grouped:any = {}
-        transactions.value.forEach((t : any)=> {
-          if (t.type === 'expense') {
-            grouped[t.category] = (grouped[t.category] || 0) + t.amount
-          }
-        })
-        const labels = Object.keys(grouped)
-        const data: any = Object.values(grouped)
-        const chartData:ChartData = {
+  const getChartData = () => {
+      const documentStyle = getComputedStyle(document.body);
+          const grouped:any = {}
+          store.transactions.forEach((t : any)=> {
+            if (t.type === 'expense') {
+              grouped[t.category] = (grouped[t.category] || 0) + t.amount
+            }
+          })
+          const labels = Object.keys(grouped)
+          const data: any = Object.values(grouped)
+          const chartData:ChartData = {
           labels,
           datasets: [
-            {
-              label: 'Expenses by Category',
-              data,
-              backgroundColor: ['#EF4444', '#F97316', '#FACC15', '#10B981', '#3B82F6', '#8B5CF6'],
-            },
-          ],
-        }
-        return chartData
+              {
+                  data,
+                  backgroundColor: [documentStyle.getPropertyValue('--p-cyan-500'), documentStyle.getPropertyValue('--p-orange-500'), documentStyle.getPropertyValue('--p-gray-500'),'#EF4444', '#F97316', '#FACC15', '#10B981', '#3B82F6', '#8B5CF6'],
+                  hoverBackgroundColor: [documentStyle.getPropertyValue('--p-cyan-400'), documentStyle.getPropertyValue('--p-orange-400'), documentStyle.getPropertyValue('--p-gray-400')]
+              }
+          ]
       }
-  const fetchSummary = async () => {
-        try {
-          const res = await API.get('/transactions', {
-            params: { month: props.month }
-          })
-           transactions.value = res.data
-        } catch (err) {
-          console.error('Failed to load summary', err)
-        }
-    }
+      return chartData
+  };
 
-  defineExpose({fetchSummary})
+  const setChartOptions = () => {
+      const documentStyle = getComputedStyle(document.documentElement);
+      const textColor = documentStyle.getPropertyValue('--p-text-color');
 
-  onMounted(()=> fetchSummary())
-
+      return {
+          plugins: {
+              legend: {
+                  labels: {
+                      usePointStyle: true,
+                      color: textColor
+                  }
+              }
+          }
+      };
+  };
   </script>
   
