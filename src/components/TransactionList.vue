@@ -1,8 +1,8 @@
 <template>
     <div class="bg-white p-6 rounded shadow mt-6" style="min-width: 49vw;">
       <h2 class="text-xl font-bold mb-4">Transactions</h2>
-      <div v-if="store.transactions.length === 0">No transactions yet.</div>
-      <DataTable :value="store.transactions" stripedRows paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 20rem">
+      <div v-if="transactions.length === 0">No transactions yet.</div>
+      <DataTable :value="transactions" stripedRows paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 20rem">
         <Column field="type" header="Type">
             <template #body="slotProps">
               <Tag :value="slotProps.data.type" :severity="getTypeSeverity(slotProps.data)"></Tag>
@@ -25,38 +25,26 @@
     </div>
   </template>
   <script lang="ts" setup>
-import {onMounted} from 'vue';
+import {computed, onMounted} from 'vue';
 import API from '../api';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { Button, Tag, useConfirm} from 'primevue';
 import { useToast } from "primevue/usetoast";
 import { useTransactionStore } from '../store/Transactions';
+import { useDashboardStore } from '../store/Dashboard';
 
 
 const confirm = useConfirm()
 const toast = useToast();
-const store = useTransactionStore()
-const props = defineProps<{month: string}>();  
+const store = useTransactionStore();
+const dashboardStore = useDashboardStore();
+const transactions = computed(() => store.transactions);
 
-// const fetchTransactions = async() => {
-//     try {
-//         const res = await API.get('/transactions', {params: { month: props.month }})
-//         transactions.value = res.data.map((t: any)=>{
-//           const non_formated_date = new Date(t.date);
-//           const date = non_formated_date.getDate();
-//           const month = non_formated_date.getMonth() +1;
-//           const year = non_formated_date.getFullYear();
-//           t.date = month + '-' + date + '-' + year;
-//           return t;
-//         });
-//     } catch (err) {
-//       console.error(err)
-//     }
-// }
-
-  const formatCurrency = (value:any) => {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+const formatCurrency = (value:any) => {
+    if(value){
+      return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    }
   };
 
   const getTypeSeverity = (transaction:any)=>{
@@ -88,7 +76,7 @@ const props = defineProps<{month: string}>();
         accept: async ()  => {
          try {
           await API.delete(`/transactions/${id}`)
-          store.fetchTransactions(props.month);
+          store.fetchTransactions(dashboardStore.selectedMonth);
           toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
           } catch (err) {
             toast.add({ severity: 'error', summary: 'Unable to delete', detail: 'Unable to delete transaction', life: 3000 });
@@ -102,11 +90,7 @@ const props = defineProps<{month: string}>();
 };
   
   onMounted(() => {
-    store.fetchTransactions(props.month)
-  })
-
-  defineExpose({
-    //fetchTransactions
+    store.fetchTransactions(dashboardStore.selectedMonth)
   })
 
   </script>

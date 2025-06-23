@@ -65,6 +65,8 @@ import { Form, FormField} from '@primevue/forms';
 import {InputText, InputNumber, Select,Button, Message, useToast} from 'primevue';
 import { mockTransactionResolver, transactionFormResolver } from '../validation/resolvers';
 import { inject } from "vue";
+import { useTransactionStore } from '../store/Transactions';
+import { useDashboardStore } from '../store/Dashboard';
 
   const categories = ref<Category[]>([]);
   const show_add_category = ref(true);
@@ -84,6 +86,9 @@ import { inject } from "vue";
   ]);
   const toast = useToast();
   const dialogRef:any = inject('dialogRef');
+  const transactionStore = useTransactionStore()
+  const dashboardStore = useDashboardStore()
+
 
   const addCategory =  async () => {
     try {
@@ -108,7 +113,8 @@ import { inject } from "vue";
     const result = await formRef.value?.validate();
       if(Object.keys(result.errors).length === 0 || mockTransactionResolver(form)){
         try {
-          await API.post("/transactions/add", form);
+          await transactionStore.addTransaction(form);
+          await transactionStore.fetchTransactions(dashboardStore.selectedMonth)
           showToast('Transaction submitted successfully.');
           closeDialog();
         } catch (err) {

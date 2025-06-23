@@ -25,29 +25,33 @@
   </template>
   
   <script lang="ts" setup>
-import { ref, onMounted} from 'vue';
+import { ref, onMounted, computed, watch} from 'vue';
 import PieChart from './PieChart.vue'
 import { ChartData } from 'chart.js';
 import { useTransactionStore } from '../store/Transactions';
+import { useDashboardStore } from '../store/Dashboard';
 
   const props = defineProps<{month: string}>();
   const chartData = ref();
   const chartOptions = ref();  
-  const store = useTransactionStore()
+  const transactionStore = useTransactionStore();
+  const dashboardStore = useDashboardStore();
+  const transactions = computed(() => transactionStore.transactions);
+
   
   onMounted(() => {
-      store.fetchTransactions(props.month)
+      transactionStore.fetchTransactions(dashboardStore.selectedMonth)
       chartData.value = getChartData();
       chartOptions.value = setChartOptions();
   });
 
   const income = ()=> {
-        return store.transactions
+        return transactions.value
           .filter(t => t.type === 'income')
           .reduce((sum, t) => sum + t.amount, 0)
   }
   const expenses = ()=> {
-        return store.transactions
+        return transactions.value
           .filter(t => t.type === 'expense')
           .reduce((sum, t) => sum + t.amount, 0)
   }
@@ -55,7 +59,7 @@ import { useTransactionStore } from '../store/Transactions';
   const getChartData = () => {
       const documentStyle = getComputedStyle(document.body);
           const grouped:any = {}
-          store.transactions.forEach((t : any)=> {
+          transactionStore.transactions.forEach((t : any)=> {
             if (t.type === 'expense') {
               grouped[t.category] = (grouped[t.category] || 0) + t.amount
             }
