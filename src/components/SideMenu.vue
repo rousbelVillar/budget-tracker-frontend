@@ -7,11 +7,10 @@
 
 <script lang="ts" setup>
 import { Menu } from "primevue";
-import { defineAsyncComponent, ref } from "vue";
+import { ref } from "vue";
 import { useDialog } from 'primevue/usedialog';
 import TransactionForm from "../components/TransactionForm.vue";
 const dialog = useDialog();
-const dynamicComponent = defineAsyncComponent(() => import('../components/TransactionForm.vue'));
 
 const items = ref([
     {
