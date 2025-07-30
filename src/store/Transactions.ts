@@ -17,6 +17,7 @@ export const useTransactionStore = defineStore("transactions", {
       try {
         const res = await API.get("/transactions", {
           params: { month: date },
+          withCredentials: true,
         });
         this.transactions = res.data.map((t: any) => {
           t.date = formatTransactionDate(t.date);
