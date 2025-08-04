@@ -33,7 +33,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../store/Auth';
 import { Button, InputText, Password } from 'primevue';
-import { useRoute, useRouter } from 'vue-router';
+import {useRouter } from 'vue-router';
 
 
 const emailUser = ref("");
@@ -41,16 +41,16 @@ const password = ref("");
 
 const authStore = useAuthStore();
 const {login, isLoading, error} = authStore;
-const router = useRouter();
+const router = useRouter()
+
 
 const handleLogin = async ()=>{
    if(!emailUser.value || !password.value) return;
    const success = await login({ emailUser:emailUser.value, password : password.value});
-   if(success)
-    router.push('/dashboard')
-    
+   if(success){
+      authStore.authenticated = true;
+      router.push('/dashboard')
+   }
 }
-
-
 
 </script>

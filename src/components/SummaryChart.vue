@@ -30,6 +30,7 @@ import PieChart from './PieChart.vue'
 import { ChartData } from 'chart.js';
 import { useTransactionStore } from '../store/Transactions';
 import { useDashboardStore } from '../store/Dashboard';
+import { useAuthStore } from '../store/Auth';
 
   const props = defineProps<{month: string}>();
   const chartData = ref();
@@ -37,12 +38,12 @@ import { useDashboardStore } from '../store/Dashboard';
   const transactionStore = useTransactionStore();
   const dashboardStore = useDashboardStore();
   const transactions = computed(() => transactionStore.transactions);
+  const authStore = useAuthStore();
 
   
   onMounted(() => {
-      transactionStore.fetchTransactions(dashboardStore.selectedMonth)
-      chartData.value = getChartData();
-      chartOptions.value = setChartOptions();
+  chartData.value = getChartData();
+  chartOptions.value = setChartOptions();
   });
 
   const income = ()=> {

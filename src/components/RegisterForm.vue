@@ -46,11 +46,10 @@ const onSubmit = async () => {
 
     localErrorValue.value = "";
     if(password.value !== confirmPassword.value){
-        auth.error = "Passords do not match";
+        auth.error = "Passwords do not match";
         return;
     }
-    await auth.register( name.value, email.value,password.value);
-    
+    await auth.register( name.value, email.value,password.value)
     
 }
 </script>

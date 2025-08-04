@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import API from "../api";
+import { getCookie } from "../globals/globals";
 
 API.defaults.withCredentials = true;
 
@@ -29,10 +30,19 @@ export const useAuthStore = defineStore("auth", {
     async fetchProfile() {
       this.isLoading = true;
       this.error = null;
+      const csrfToken = getCookie("csrf_access_token");
       try {
-        const res = await API.get("/auth/profile", {
-          withCredentials: true,
-        });
+        const res = await API.get(
+          "/auth/profile",
+          {
+            withCredentials: true,
+          },
+          {
+            headers: {
+              "X-CSRF-TOKEN": csrfToken ?? "",
+            },
+          }
+        );
         this.user = res.data;
         this.authenticated = true;
         return true;
@@ -47,11 +57,10 @@ export const useAuthStore = defineStore("auth", {
       this.isLoading = true;
       this.error = null;
       try {
-        const res = await API.post(
-          "/auth/login",
-          { email: loginInfo.emailUser, password: loginInfo.password },
-          { withCredentials: true }
-        );
+        const res = await API.post("/auth/login", {
+          email: loginInfo.emailUser,
+          password: loginInfo.password,
+        });
         this.user = res.data;
         this.authenticated = true;
         await this.fetchProfile();
@@ -91,6 +100,7 @@ export const useAuthStore = defineStore("auth", {
 
       try {
         await API.post("/auth/logout", {}, { withCredentials: true });
+        this.authenticated = false;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Logout failed";
       } finally {

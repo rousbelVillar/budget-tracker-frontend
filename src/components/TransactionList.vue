@@ -25,7 +25,7 @@
     </div>
   </template>
   <script lang="ts" setup>
-import {computed, onMounted} from 'vue';
+import {computed} from 'vue';
 import API from '../api';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -34,13 +34,16 @@ import { useToast } from "primevue/usetoast";
 import { useTransactionStore } from '../store/Transactions';
 import { useDashboardStore } from '../store/Dashboard';
 import { formatCurrency, getTypeSeverity } from '../globals/globals';
+import { useAuthStore } from '../store/Auth';
 
 
 const confirm = useConfirm()
 const toast = useToast();
 const store = useTransactionStore();
+const authStore = useAuthStore();
 const dashboardStore = useDashboardStore();
 const transactions = computed(() => store.transactions);
+
 
   const confirmDeletion = (id:number) => {
     
@@ -74,9 +77,6 @@ const transactions = computed(() => store.transactions);
     });
 };
   
-  onMounted(() => {
-    store.fetchTransactions(dashboardStore.selectedMonth)
-  })
 
   </script>
   

@@ -1,8 +1,8 @@
 <template>
     <div class="flex items-stretch content-center">
        <SideMenu class="flex-none"></SideMenu>
-      <TransactionList class="flex-auto" ref="list" :month="selected_month" />
-      <SummaryChart class="flex-auto" ref="summary" :month="selected_month" />
+      <TransactionList class="flex-auto" ref="list" :month="dashboardStore.selectedMonth" />
+      <SummaryChart class="flex-auto" ref="summary" :month="dashboardStore.selectedMonth" />
     </div>
   </template>
   
@@ -12,16 +12,15 @@
   import { onMounted, ref } from 'vue';
   import SideMenu from '../components/SideMenu.vue';
   import { useDashboardStore } from '../store/Dashboard';
+import { useTransactionStore } from '../store/Transactions';
 
   const dashboardStore = useDashboardStore();
-  const selected_month = ref<string>('');
+  const transactionStore = useTransactionStore();
   const list = ref<InstanceType<typeof TransactionList> | null>(null);
   const summary = ref<InstanceType<typeof SummaryChart> | null>(null);
-
   onMounted(() => {
-    const now = new Date()
-    dashboardStore.setSelectedMonth(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`)
-  });
+    transactionStore.fetchTransactions(dashboardStore.selectedMonth)
+  })
   </script>
   
   <style scoped>
