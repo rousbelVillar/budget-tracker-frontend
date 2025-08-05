@@ -132,6 +132,9 @@ import { showToast } from '../globals/globals';
         .catch((e:any)=>{
           showToast(toast,e.response.data.error || 'Error retrieving transactions.','error')
         })
+        .finally(()=>{
+          transactionStore.loading = false;
+        })
     }
   }
 

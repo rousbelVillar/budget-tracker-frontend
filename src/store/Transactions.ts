@@ -15,36 +15,22 @@ export const useTransactionStore = defineStore("transactions", {
       this.loading = true;
       this.error = null;
       const csrfToken = getCookie("csrf_access_token");
-      try {
-        const res = await API.get("/transactions/get", {
-          params: { month: date },
-          headers: {
-            "X-CSRF-TOKEN": csrfToken ?? "",
-          },
-        });
-        this.transactions = res.data.map((t: any) => {
-          t.date = formatTransactionDate(t.date);
-          return t;
-        });
-      } catch (err: any) {
-        this.error = err.message || "Failed to load transactions";
-      } finally {
-        this.loading = false;
-      }
+      const res = await API.get("/transactions/get", {
+        params: { month: date },
+        headers: {
+          "X-CSRF-TOKEN": csrfToken ?? "",
+        },
+      });
+      this.transactions = res.data.map((t: any) => {
+        t.date = formatTransactionDate(t.date);
+        return t;
+      });
     },
 
     async addTransaction(data: TransactionForm) {
-      const csrfToken = getCookie("csrf_access_token");
-      try {
-        await API.post("/transactions/add", {
-          params: data,
-          headers: {
-            "X-CSRF-TOKEN": csrfToken ?? "",
-          },
-        });
-      } catch (err: any) {
-        this.error = err.message || "Failed to add transaction";
-      }
+      await API.post("/transactions/add", {
+        params: data,
+      });
     },
   },
 });
