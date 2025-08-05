@@ -71,7 +71,7 @@ import { showToast } from '../globals/globals';
 
 
   const categoriesStore = useCategorieStore()
-  const categories = computed(()=>categoriesStore.categories);
+  const categories = computed(()=> categoriesStore.categories);
   const show_add_category = ref(true);
   const default_category = {name: "",icon: "📝",is_default: false}
   const new_category = reactive<Category>(default_category);
@@ -94,21 +94,24 @@ import { showToast } from '../globals/globals';
 
 
   const addCategory =  async () => {
-      await Promise.all([
-          categoriesStore.addCategory(new_category),
-          categoriesStore.fetchCategories()
-      ]).then(async ()=>{
+      await categoriesStore.addCategory(new_category).then(async ()=>{
           new_category.icon = default_category.icon;
           new_category.is_default = default_category.is_default;
           new_category.name = default_category.name;
           show_add_category.value = !show_add_category.value;
           showToast(toast,'Cattegory submitted successfully.');
-      }).catch((e:any)=>{
+      })
+      .catch((e:any)=>{
           showToast(toast, e.response.data.error || 'Error adding category.', 'error');
+      })
+      await categoriesStore.fetchCategories()
+      .catch((e:any)=>{
+          showToast(toast, e.response.data.error || 'Error updating categories.', 'error');
       }).finally(()=>{
           categoriesStore.loading = false;
-      })
+      });  
   }
+  
   const cancelAddCategory = ()=>{
       new_category.name = '';
       show_add_category.value = !show_add_category.value;
@@ -117,21 +120,20 @@ import { showToast } from '../globals/globals';
   const submitTransaction = async () => {
     const result = await formRef.value?.validate();
       if(Object.keys(result.errors).length === 0 || mockTransactionResolver(form)){
-        try {
-          await Promise.all([
-            transactionStore.addTransaction(form),
-            transactionStore.fetchTransactions(dashboardStore.selectedMonth)
-          ]).then(()=>{
-            showToast(toast,'Transaction submitted successfully.');
-            closeDialog();
-          }).catch((e:any)=>{
-            showToast(toast,e.response.data.error || 'An error has occured','error')
-          });
-        } catch (err:any) {
-          
-        }
-      }
+        await transactionStore.addTransaction(form).
+        then(()=>{
+          showToast(toast,'Transaction submitted successfully.');
+          closeDialog();
+        })
+        .catch((e:any)=>{
+          showToast(toast,e.response.data.error || 'Error adding transaction.','error')
+        })
+        await transactionStore.fetchTransactions(dashboardStore.selectedMonth)
+        .catch((e:any)=>{
+          showToast(toast,e.response.data.error || 'Error retrieving transactions.','error')
+        })
     }
+  }
 
   const closeDialog = () => {
     dialogRef.value.close();
