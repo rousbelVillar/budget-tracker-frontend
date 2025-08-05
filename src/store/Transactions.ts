@@ -18,7 +18,6 @@ export const useTransactionStore = defineStore("transactions", {
       try {
         const res = await API.get("/transactions/get", {
           params: { month: date },
-          withCredentials: true,
           headers: {
             "X-CSRF-TOKEN": csrfToken ?? "",
           },
@@ -39,7 +38,6 @@ export const useTransactionStore = defineStore("transactions", {
       try {
         await API.post("/transactions/add", {
           params: data,
-          withCredentials: true,
           headers: {
             "X-CSRF-TOKEN": csrfToken ?? "",
           },

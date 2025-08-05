@@ -57,18 +57,21 @@
 
 <script lang="ts" setup>
 
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, onMounted, computed } from 'vue';
 import { TransactionForm } from '../interfaces/Transaction';
 import { Category } from '../interfaces/Category';
-import API from '../api';
 import { Form, FormField} from '@primevue/forms';
 import {InputText, InputNumber, Select,Button, Message, useToast} from 'primevue';
 import { mockTransactionResolver, transactionFormResolver } from '../validation/resolvers';
 import { inject } from "vue";
 import { useTransactionStore } from '../store/Transactions';
 import { useDashboardStore } from '../store/Dashboard';
+import { useCategorieStore } from '../store/Categories';
+import { showToast } from '../globals/globals';
 
-  const categories = ref<Category[]>([]);
+
+  const categoriesStore = useCategorieStore()
+  const categories = computed(()=>categoriesStore.categories);
   const show_add_category = ref(true);
   const default_category = {name: "",icon: "📝",is_default: false}
   const new_category = reactive<Category>(default_category);
@@ -91,18 +94,20 @@ import { useDashboardStore } from '../store/Dashboard';
 
 
   const addCategory =  async () => {
-    try {
-    const res = await API.post('/categories/add', new_category)
-      categories.value.push(res.data);
-      new_category.icon = default_category.icon;
-      new_category.is_default = default_category.is_default;
-      new_category.name = default_category.name;
-      show_add_category.value = !show_add_category.value;
-      showToast('Cattegory submitted successfully.');
-    } catch (error) {
-      showToast('Error adding category.');
-      console.error(error);
-    }
+      await Promise.all([
+          categoriesStore.addCategory(new_category),
+          categoriesStore.fetchCategories()
+      ]).then(async ()=>{
+          new_category.icon = default_category.icon;
+          new_category.is_default = default_category.is_default;
+          new_category.name = default_category.name;
+          show_add_category.value = !show_add_category.value;
+          showToast(toast,'Cattegory submitted successfully.');
+      }).catch((e:any)=>{
+          showToast(toast, e.response.data.error || 'Error adding category.', 'error');
+      }).finally(()=>{
+          categoriesStore.loading = false;
+      })
   }
   const cancelAddCategory = ()=>{
       new_category.name = '';
@@ -113,39 +118,27 @@ import { useDashboardStore } from '../store/Dashboard';
     const result = await formRef.value?.validate();
       if(Object.keys(result.errors).length === 0 || mockTransactionResolver(form)){
         try {
-          await transactionStore.addTransaction(form);
-          await transactionStore.fetchTransactions(dashboardStore.selectedMonth)
-          showToast('Transaction submitted successfully.');
-          closeDialog();
-        } catch (err) {
-          console.error(err);
-          showToast('Error adding transaction.');
+          await Promise.all([
+            transactionStore.addTransaction(form),
+            transactionStore.fetchTransactions(dashboardStore.selectedMonth)
+          ]).then(()=>{
+            showToast(toast,'Transaction submitted successfully.');
+            closeDialog();
+          }).catch((e:any)=>{
+            showToast(toast,e.response.data.error || 'An error has occured','error')
+          });
+        } catch (err:any) {
+          
         }
       }
     }
-
-  const fetchCategories = async() => {
-    const res = await API.get('/categories')
-    categories.value = res.data.map((c:any)=>{
-      const category : Category = {name:c.name,icon:c.icon,is_default:c.is_default,optionAndIcon:c.icon + " " + c.name}
-      return category
-    });
-  }
-
-  const showToast = (msj:string,severity?:string)=>{
-    toast.add({
-      severity: severity ? severity: 'success',
-      summary: msj,
-      life: 3000
-    });
-  }
 
   const closeDialog = () => {
     dialogRef.value.close();
   }
 
-  onMounted(() => {
-    fetchCategories()
+  onMounted( async ()  => {
+     await categoriesStore.fetchCategories().then(console.log)
   })
 
 </script>

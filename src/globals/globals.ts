@@ -34,3 +34,11 @@ export function getCookie(name: string) {
   }
   return "";
 }
+
+export const showToast = (toast: any, msj: string, severity?: string) => {
+  toast.add({
+    severity: severity ? severity : "success",
+    summary: msj,
+    life: 3000,
+  });
+};

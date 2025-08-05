@@ -28,7 +28,6 @@
 import { computed, ref } from 'vue';
 import { useAuthStore } from '../store/Auth';
 import { Button, InputText, Password } from 'primevue';
-import { useRouter } from 'vue-router';
 
 const name = ref('');
 const email = ref('');
@@ -39,17 +38,14 @@ const localErrorValue = ref('');
 const auth = useAuthStore();
 const isLoading = computed(()=> auth.isLoading);
 const error = computed(()=> auth.error);
-const router = useRouter();
 
 
 const onSubmit = async () => {
-
     localErrorValue.value = "";
     if(password.value !== confirmPassword.value){
         auth.error = "Passwords do not match";
         return;
     }
     await auth.register( name.value, email.value,password.value)
-    
 }
 </script>
