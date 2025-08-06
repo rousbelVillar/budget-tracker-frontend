@@ -4,17 +4,7 @@
     <Toast />
     <ConfirmDialog/>
     <DynamicDialog/>
-    <div v-if="auth.isAuthenticated">
-      <div class="p-4 flex justify-between items-center">
-        <div>Welcome, {{ auth.user?.name }}!</div>
-      </div>
-      <!-- <Button label="Logout" @click="logout()" severity="secondary" /> -->
-      <RouterView />
-    </div>
-
-  <div v-else>
     <RouterView />
-  </div>
 </template>
 
 <script setup lang="ts">

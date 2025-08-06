@@ -1,8 +1,10 @@
 <template>
+  <ProfilePage/>
     <div class="flex items-stretch content-center">
        <SideMenu class="flex-none"></SideMenu>
       <TransactionList class="flex-auto" ref="list" :month="dashboardStore.selectedMonth" />
       <SummaryChart class="flex-auto" ref="summary" :month="dashboardStore.selectedMonth" />
+
     </div>
   </template>
   
@@ -12,7 +14,8 @@
   import { onMounted, ref } from 'vue';
   import SideMenu from '../components/SideMenu.vue';
   import { useDashboardStore } from '../store/Dashboard';
-import { useTransactionStore } from '../store/Transactions';
+  import { useTransactionStore } from '../store/Transactions';
+  import ProfilePage from '../components/ProfilePage.vue';
 
   const dashboardStore = useDashboardStore();
   const transactionStore = useTransactionStore();
