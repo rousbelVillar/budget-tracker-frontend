@@ -2,11 +2,11 @@ import { Category } from "./Category";
 
 
 export interface Transaction{
-  type: "income" | "expense";
-  category:Category;
+  type: "income" | "expense" | '';
+  category:Category | string;
   description: string;
   amount:number;
-  date:Date;
+  date:string;
   id:number;
 };
 
