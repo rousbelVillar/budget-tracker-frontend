@@ -26,25 +26,23 @@
   </template>
   <script lang="ts" setup>
 import {computed} from 'vue';
-import API from '../api';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { Message,Button, Tag, useConfirm} from 'primevue';
 import { useToast } from "primevue/usetoast";
 import { useTransactionStore } from '../store/Transactions';
-import { useDashboardStore } from '../store/Dashboard';
 import { formatCurrency, getTypeSeverity } from '../globals/globals';
+import { useDashboardStore } from '../store/Dashboard';
 
 
 const confirm = useConfirm()
 const toast = useToast();
 const store = useTransactionStore();
-const dashboardStore = useDashboardStore();
 const transactions = computed(() => store.transactions);
+const dashboardStore = useDashboardStore();
 
 
-  const confirmDeletion = (id:number) => {
-    
+const confirmDeletion = (id:number) => {
     confirm.require({
         message: 'Do you want to remove this transaction?',
         header: 'Remove transaction',
@@ -60,14 +58,13 @@ const transactions = computed(() => store.transactions);
             severity: 'danger'
         },
         accept: async ()  => {
-         try {
-          await API.delete(`/transactions/${id}`)
-          store.fetchTransactions(dashboardStore.selectedMonth);
-          toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
-          } catch (err) {
-            toast.add({ severity: 'error', summary: 'Unable to delete', detail: 'Unable to delete transaction', life: 3000 });
-            console.error(err)
-          }
+            await store.removeTransaction(id)
+            .then(()=>{
+              store.fetchTransactions(dashboardStore.selectedMonth);
+              toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
+            }).catch(()=>{
+              toast.add({ severity: 'error', summary: 'Unable to delete', detail: 'Unable to delete transaction', life: 3000 });
+            })
         },
         // reject: () => {
         //     toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });

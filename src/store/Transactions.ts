@@ -12,9 +12,9 @@ export const useTransactionStore = defineStore("transactions", {
   }),
   actions: {
     async fetchTransactions(date: string) {
+      const csrfToken = getCookie("csrf_access_token");
       this.loading = true;
       this.error = null;
-      const csrfToken = getCookie("csrf_access_token");
       const res = await API.get("/transactions/get", {
         params: { month: date },
         headers: {
@@ -27,9 +27,24 @@ export const useTransactionStore = defineStore("transactions", {
       });
     },
 
-    async addTransaction(data: TransactionForm) {
-      await API.post("/transactions/add", {
-        params: data,
+    async addTransaction(transaction: TransactionForm) {
+      const csrfToken = getCookie("csrf_access_token");
+      await API.post(
+        "/transactions/add",
+        { params: transaction },
+        {
+          headers: {
+            "X-CSRF-TOKEN": csrfToken ?? "",
+          },
+        }
+      );
+    },
+    async removeTransaction(id: number) {
+      const csrfToken = getCookie("csrf_access_token");
+      await API.delete(`/transactions/${id}`, {
+        headers: {
+          "X-CSRF-TOKEN": csrfToken ?? "",
+        },
       });
     },
   },

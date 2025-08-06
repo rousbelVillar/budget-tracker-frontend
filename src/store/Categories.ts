@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { Category } from "../interfaces/Category";
 import API from "../api";
+import { getCookie } from "../globals/globals";
 
 export const useCategorieStore = defineStore("categories", {
   state: () => ({
@@ -31,11 +32,16 @@ export const useCategorieStore = defineStore("categories", {
       }
     },
     async addCategory(newCategory: Category) {
-      const res = await API.post("/categories/add", {
-        params: newCategory,
-      });
-      this.categories.push(res.data);
-      console.log(this.categories);
+      const csrfToken = getCookie("csrf_access_token");
+      const res = await API.post(
+        "/categories/add",
+        { params: newCategory },
+        {
+          headers: {
+            "X-CSRF-TOKEN": csrfToken ?? "",
+          },
+        }
+      );
     },
   },
 });

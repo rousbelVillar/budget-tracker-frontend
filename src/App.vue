@@ -13,7 +13,6 @@
     </div>
 
   <div v-else>
-    <AuthPage/>
     <RouterView />
   </div>
 </template>
@@ -21,7 +20,6 @@
 <script setup lang="ts">
 import { useAuthStore } from "./store/Auth";
 import { Button, ConfirmDialog, DynamicDialog, Toast} from 'primevue';
-import AuthPage from "./components/AuthPage.vue";
 import { useRouter } from "vue-router";
 import { onMounted } from "vue";
 import { getCookie } from "./globals/globals";

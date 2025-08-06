@@ -2,8 +2,6 @@ import { defineStore } from "pinia";
 import API from "../api";
 import { getCookie } from "../globals/globals";
 
-API.defaults.withCredentials = true;
-
 interface User {
   id: number;
   email: string;
@@ -32,17 +30,12 @@ export const useAuthStore = defineStore("auth", {
       this.error = null;
       const csrfToken = getCookie("csrf_access_token");
       try {
-        const res = await API.get(
-          "/auth/profile",
-          {
-            withCredentials: true,
+        const res = await API.get("/auth/profile", {
+          headers: {
+            "X-CSRF-TOKEN": csrfToken ?? "",
           },
-          {
-            headers: {
-              "X-CSRF-TOKEN": csrfToken ?? "",
-            },
-          }
-        );
+          withCredentials: true,
+        });
         this.user = res.data;
         this.authenticated = true;
         return true;
@@ -57,10 +50,16 @@ export const useAuthStore = defineStore("auth", {
       this.isLoading = true;
       this.error = null;
       try {
-        const res = await API.post("/auth/login", {
-          email: loginInfo.emailUser,
-          password: loginInfo.password,
-        });
+        const res = await API.post(
+          "/auth/login",
+          {
+            email: loginInfo.emailUser,
+            password: loginInfo.password,
+          },
+          {
+            withCredentials: true,
+          }
+        );
         this.user = res.data;
         this.authenticated = true;
         await this.fetchProfile();
@@ -78,11 +77,7 @@ export const useAuthStore = defineStore("auth", {
       this.error = null;
 
       try {
-        const res = await API.post(
-          "/auth/register",
-          { name, email, password },
-          { withCredentials: true }
-        );
+        const res = await API.post("/auth/register", { name, email, password });
         this.user = res.data;
         this.authenticated = true;
         return true;
