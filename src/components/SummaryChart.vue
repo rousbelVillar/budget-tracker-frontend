@@ -29,16 +29,11 @@ import { ref, onMounted, computed, watch} from 'vue';
 import PieChart from './PieChart.vue'
 import { ChartData } from 'chart.js';
 import { useTransactionStore } from '../store/Transactions';
-import { useDashboardStore } from '../store/Dashboard';
-import { useAuthStore } from '../store/Auth';
 
-  const props = defineProps<{month: string}>();
   const chartData = ref();
   const chartOptions = ref();  
   const transactionStore = useTransactionStore();
-  const dashboardStore = useDashboardStore();
   const transactions = computed(() => transactionStore.transactions);
-  const authStore = useAuthStore();
 
   
   onMounted(() => {

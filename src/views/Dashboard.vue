@@ -1,10 +1,8 @@
 <template>
-  <ProfilePage/>
-    <div class="flex items-stretch content-center">
-       <SideMenu class="flex-none"></SideMenu>
-      <TransactionList class="flex-auto" ref="list" :month="dashboardStore.selectedMonth" />
-      <SummaryChart class="flex-auto" ref="summary" :month="dashboardStore.selectedMonth" />
-
+    <div class="w-100  grid grid-cols-5">
+      <SideMenu class="col-span-1" ></SideMenu>
+       <TransactionList class="col-span-3" ref="list" />
+      <SummaryChart class="col-span-1" ref="summary" />
     </div>
   </template>
   
@@ -15,15 +13,22 @@
   import SideMenu from '../components/SideMenu.vue';
   import { useDashboardStore } from '../store/Dashboard';
   import { useTransactionStore } from '../store/Transactions';
-  import ProfilePage from '../components/ProfilePage.vue';
+import { Filter } from '../interfaces/Filter';
+import { useToast } from 'primevue';
+
 
   const dashboardStore = useDashboardStore();
   const transactionStore = useTransactionStore();
   const list = ref<InstanceType<typeof TransactionList> | null>(null);
   const summary = ref<InstanceType<typeof SummaryChart> | null>(null);
+  const toast = useToast();
   onMounted(() => {
-    transactionStore.fetchTransactions(dashboardStore.selectedMonth)
-  })
+    const filter:Filter = {start_date: dashboardStore.selectedStartMonth,end_date:dashboardStore.selectedEndMonth} 
+    transactionStore.fetchTransactions(filter)
+    .catch(()=>{
+      toast.add({ severity: 'error', summary: 'Issues with transaction', detail: 'Unable to retrieve transactions', life: 3000 });
+    }).finally(()=>
+      transactionStore.loading = false)})
   </script>
   
   <style scoped>

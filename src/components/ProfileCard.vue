@@ -1,20 +1,19 @@
 <template>
-  <div class="p-2 flex justify-left">
-    <Card class="w-50">
+  <div class="flex justify-left">
+    <Card>
       <template #title>
-        <div class="flex">
           <Avatar
             image="https://picsum.photos/200/300"
             shape="circle"
-            size="xlarge"
+            size="large"
           />
-          <div>
-            <h2 class="text-lg font-semibold ml-5">{{ ("Welcome " + user?.name + "!") || 'Unnamed User' }}</h2>
-            <Tag :value="user?.email" severity="info" class="float-left ml-5" />
-          </div>
-        </div>
+      </template>
+      <template #content>
+          <h2 class="text-lg font-semibold ml-5">{{ (user?.name ) || 'Unnamed User' }}</h2>
+          <Tag :value="user?.email" severity="info" class="float-left ml-5" />
       </template>
     </Card>
+
   </div>
 </template>
 

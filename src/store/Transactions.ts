@@ -3,6 +3,7 @@ import { ref } from "vue";
 import API from "../api";
 import { Transaction, TransactionForm } from "../interfaces/Transaction";
 import { formatTransactionDate, getCookie } from "../globals/globals";
+import { Filter } from "../interfaces/Filter";
 
 export const useTransactionStore = defineStore("transactions", {
   state: () => ({
@@ -11,12 +12,13 @@ export const useTransactionStore = defineStore("transactions", {
     error: "" as string | null,
   }),
   actions: {
-    async fetchTransactions(date: string) {
+    async fetchTransactions(filter: Filter) {
       const csrfToken = getCookie("csrf_access_token");
       this.loading = true;
       this.error = null;
+      console.log(filter);
       const res = await API.get("/transactions/get", {
-        params: { month: date },
+        params: { ...filter },
         headers: {
           "X-CSRF-TOKEN": csrfToken ?? "",
         },
@@ -25,6 +27,7 @@ export const useTransactionStore = defineStore("transactions", {
         t.date = formatTransactionDate(t.date);
         return t;
       });
+      this.loading = false;
     },
 
     async addTransaction(transaction: TransactionForm) {

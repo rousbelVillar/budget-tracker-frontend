@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 
+const now: Date = new Date();
+
 export const useDashboardStore = defineStore("dashboard", {
   state: () => ({
-    selectedMonth: "" as string,
+    selectedStartMonth:
+      `${now.getUTCFullYear()}-${now.getUTCMonth()}-${now.getUTCDate()}` as string,
+    selectedEndMonth: `${now.getUTCFullYear()}-${
+      now.getUTCMonth() + 1
+    }-${now.getUTCDate()}` as string,
   }),
-  actions: {
-    setSelectedMonth(date: string) {
-      this.selectedMonth = date;
-    },
-  },
 });
