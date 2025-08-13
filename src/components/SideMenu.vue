@@ -27,16 +27,14 @@ const confirm = useConfirm()
 const items = ref([
     {
         label: 'Menu',
+    },
+    {
         items: [
             {
                 label: 'New Transaction',
                 icon: 'pi pi-plus',
                 command: () => (showForm())       
             },
-        ]
-    },
-    {
-        items: [
             {
                 label: 'Settings',
                 icon: 'pi pi-cog'
@@ -45,7 +43,7 @@ const items = ref([
                 label: 'Logout',
                 icon: 'pi pi-sign-out',
                 command: ()=>(logout())
-            }
+            },
         ]
     }
 ]);

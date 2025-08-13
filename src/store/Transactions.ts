@@ -7,18 +7,18 @@ import { Filter } from "../interfaces/Filter";
 
 export const useTransactionStore = defineStore("transactions", {
   state: () => ({
+    filters: {} as Filter,
     transactions: [] as Transaction[],
     loading: false as boolean,
     error: "" as string | null,
   }),
   actions: {
-    async fetchTransactions(filter: Filter) {
+    async fetchTransactions() {
       const csrfToken = getCookie("csrf_access_token");
       this.loading = true;
       this.error = null;
-      console.log(filter);
       const res = await API.get("/transactions/get", {
-        params: { ...filter },
+        params: { ...this.filters },
         headers: {
           "X-CSRF-TOKEN": csrfToken ?? "",
         },

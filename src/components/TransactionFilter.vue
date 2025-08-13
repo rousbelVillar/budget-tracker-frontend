@@ -5,23 +5,8 @@
     </template>
     <template #content>
       <div class="space-y-3 text-sm text-gray-600">
-
-        <!-- Date Range -->
         <div>
-          <label class="block mb-1">Date</label>
-          <Calendar
-            v-model="filters.dateRange"
-            selectionMode="range"
-            dateFormat="yy-mm-dd"
-            showIcon
-            class="w-full"
-            inputClass="text-sm px-2 py-1"
-          />
-        </div>
-
-        <!-- Suggested Amounts with Radio Buttons -->
-        <div>
-          <label class="block mb-1">Amount</label>
+          <label class="font-bold block mb-2">Amount</label>
           <div class="flex flex-col gap-1">
             <div v-for="amount in suggestedAmounts" :key="amount.value" class="flex items-center">
               <RadioButton 
@@ -35,7 +20,11 @@
           </div>
         </div>
 
-        <!-- Category -->
+        <div class="flex-auto">
+            <label for="buttondisplay" class="font-bold block mb-2"> Date Range </label>
+            <DatePicker v-model="dateRange" showIcon fluid :showOnFocus="false" :hideOnRangeSelection="true"  inputId="daterange" selectionMode="range" :manualInput="false" dateFormat="yy-mm-dd" @hide="handleDateRange()"/>
+        </div>
+
         <div>
           <label class="block mb-1">Category</label>
           <div class="card flex justify-center">
@@ -53,26 +42,25 @@
                   panelClass="text-sm"/>
           </div>
         </div>
-
       </div>
     </template>
   </Card>
 </template>
 
 <script setup lang="ts">
-import { Calendar, Card, RadioButton, MultiSelect, useToast } from 'primevue'
+import { Card, RadioButton, MultiSelect, useToast, DatePicker } from 'primevue'
 import { computed, onMounted, ref } from 'vue'
 import { useCategorieStore } from '../store/Categories'
-import { showToast } from '../globals/globals'
+import { formatDateYYMMDD, showToast } from '../globals/globals'
 import { useTransactionStore } from '../store/Transactions';
 import { Category } from '../interfaces/Category';
-import { Filter } from '../interfaces/Filter';
+import { Q } from 'vitest/dist/chunks/reporters.d.C-cu31ET';
 
 const categoriesStore = useCategorieStore();
 const transactionStore = useTransactionStore();
 const toast = useToast()
 const filters = ref({
-  dateRange: null,
+  dateRange: [],
   selectedAmount: null,
   category: [],
 })
@@ -84,16 +72,33 @@ const suggestedAmounts = [
   { label: '> $500', value: '>500' },
 ]
 
-const categories = computed(()=> categoriesStore.categories)
+const categories = computed(()=> categoriesStore.categories);
+const dateRange = ref();
+
 
 const filterCategories = async (event:any)=>{
-  const categoryFilter : Category[] = event.value;
-  const filter : Filter = {categories:categoryFilter.map((c:Category)=> c.name).join(",")}
-  await transactionStore.fetchTransactions(filter)
+  const categoryEvent : Category[] = event.value;
+  transactionStore.filters.categories = categoryEvent.map((c:Category)=> c.name).join(",");
+  await transactionStore.fetchTransactions()
     .catch(()=>{
     showToast(toast,"Unable to retrieve transactions","error");
     transactionStore.loading = false;
   }).finally(()=> transactionStore.loading = false)
+}
+
+const handleDateRange = async () =>{
+  if(dateRange.value && dateRange?.value[0] && dateRange?.value[1]){
+    const start_date = new Date(dateRange.value[0])
+    const end_date = new Date(dateRange.value[1])
+    start_date.setMonth(start_date.getUTCMonth() +1);
+    end_date.setMonth(end_date.getUTCMonth() +1);
+    transactionStore.filters.start_date = formatDateYYMMDD(start_date);
+    transactionStore.filters.end_date = formatDateYYMMDD(end_date);
+    await transactionStore.fetchTransactions().catch(()=>{
+    showToast(toast,"Unable to retrieve transactions","error");
+      transactionStore.loading = false;
+    }).finally(()=> transactionStore.loading = false);
+  }
 }
 
 onMounted(async ()=>{

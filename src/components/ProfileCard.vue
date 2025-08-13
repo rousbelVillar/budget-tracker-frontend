@@ -10,7 +10,7 @@
       </template>
       <template #content>
           <h2 class="text-lg font-semibold ml-5">{{ (user?.name ) || 'Unnamed User' }}</h2>
-          <Tag :value="user?.email" severity="info" class="float-left ml-5" />
+          <!-- <Tag :value="user?.email" severity="info" class="float-left ml-5" /> -->
       </template>
     </Card>
 

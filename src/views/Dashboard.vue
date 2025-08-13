@@ -15,6 +15,7 @@
   import { useTransactionStore } from '../store/Transactions';
 import { Filter } from '../interfaces/Filter';
 import { useToast } from 'primevue';
+import { formatDateYYMMDD } from '../globals/globals';
 
 
   const dashboardStore = useDashboardStore();
@@ -23,8 +24,13 @@ import { useToast } from 'primevue';
   const summary = ref<InstanceType<typeof SummaryChart> | null>(null);
   const toast = useToast();
   onMounted(() => {
-    const filter:Filter = {start_date: dashboardStore.selectedStartMonth,end_date:dashboardStore.selectedEndMonth} 
-    transactionStore.fetchTransactions(filter)
+    const now: Date = new Date();
+    const  selectedStartMonth = formatDateYYMMDD(now);
+    now.setMonth(now.getUTCMonth() +1)
+    const selectedEndMonth =  formatDateYYMMDD(now);
+    transactionStore.filters.start_date = selectedStartMonth;
+    transactionStore.filters.end_date = selectedEndMonth;
+    transactionStore.fetchTransactions()
     .catch(()=>{
       toast.add({ severity: 'error', summary: 'Issues with transaction', detail: 'Unable to retrieve transactions', life: 3000 });
     }).finally(()=>

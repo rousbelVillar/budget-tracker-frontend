@@ -42,3 +42,7 @@ export const showToast = (toast: any, msj: string, severity?: string) => {
     life: 3000,
   });
 };
+
+export const formatDateYYMMDD = (date: Date) => {
+  return `${date.getUTCFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()}` as string;
+};
