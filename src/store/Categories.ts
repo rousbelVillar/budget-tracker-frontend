@@ -13,24 +13,19 @@ export const useCategorieStore = defineStore("categories", {
     async fetchCategories() {
       this.loading = true;
       this.error = null;
-      try {
-        const res = await API.get("/categories/get");
-        this.categories = res.data.map((c: any) => {
-          const category: Category = {
-            name: c.name,
-            icon: c.icon,
-            is_default: c.is_default,
-            optionAndIcon: c.icon + " " + c.name,
-          };
-          return category;
-        });
-        return this.categories;
-      } catch (error: any) {
-        this.error = error.message || "Error loading categories.";
-      } finally {
-        this.loading = false;
-      }
+      const res = await API.get("/categories/get");
+      this.categories = res.data.map((c: any) => {
+        const category: Category = {
+          name: c.name,
+          icon: c.icon,
+          is_default: c.is_default,
+          optionAndIcon: c.icon + " " + c.name,
+        };
+        return category;
+      });
+      return this.categories;
     },
+
     async addCategory(newCategory: Category) {
       const csrfToken = getCookie("csrf_access_token");
       const res = await API.post(

@@ -2,18 +2,18 @@
     <div class="bg-white p-6 rounded shadow mt-6">
       <h2 class="text-xl font-bold mb-4">Summary</h2>
   
-      <div class="grid grid-cols-3 gap-4 text-center">
-        <div>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="p-2">
           <div class="text-sm text-gray-500">Income</div>
-          <div class="text-green-600 font-bold text-lg">${{ income().toFixed(2) }}</div>
+           <Tag :value="`$${income().toFixed(2)}`" severity="success"/>
         </div>
-        <div>
+        <div class="p-2">
           <div class="text-sm text-gray-500">Expenses</div>
-          <div class="text-red-600 font-bold text-lg">${{ expenses().toFixed(2) }}</div>
+          <Tag :value="`$${expenses().toFixed(2)}`" severity="danger"/>
         </div>
-        <div>
+        <div class="p-2">
           <div class="text-sm text-gray-500">Balance</div>
-          <div class="text-blue-600 font-bold text-lg">${{ (income() - expenses()).toFixed(2) }}</div>
+          <Tag :value="`$${(income() - expenses()).toFixed(2)}`" severity="info"/>
         </div>
       </div>
   
@@ -25,20 +25,16 @@
   </template>
   
   <script lang="ts" setup>
-import { ref, onMounted, computed, watch} from 'vue';
+import { ref, onMounted, computed} from 'vue';
 import PieChart from './PieChart.vue'
 import { ChartData } from 'chart.js';
 import { useTransactionStore } from '../store/Transactions';
-import { useDashboardStore } from '../store/Dashboard';
-import { useAuthStore } from '../store/Auth';
+import { Tag } from 'primevue';
 
-  const props = defineProps<{month: string}>();
   const chartData = ref();
   const chartOptions = ref();  
   const transactionStore = useTransactionStore();
-  const dashboardStore = useDashboardStore();
   const transactions = computed(() => transactionStore.transactions);
-  const authStore = useAuthStore();
 
   
   onMounted(() => {

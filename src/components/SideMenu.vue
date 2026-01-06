@@ -1,7 +1,9 @@
 
 <template>
-    <div class="card flex justify-center">
+    <div class="card flex flex-col justify-center gap-3">
+        <ProfileCard/>
         <Menu :model="items"></Menu>
+        <TransactionFilter />
     </div>
 </template>
 
@@ -12,6 +14,8 @@ import { useDialog } from 'primevue/usedialog';
 import TransactionForm from "../components/TransactionForm.vue";
 import { useAuthStore } from "../store/Auth";
 import { useRouter } from "vue-router";
+import TransactionFilter from "./TransactionFilter.vue";
+import ProfileCard from "./ProfileCard.vue";
 
 const dialog = useDialog();
 const auth = useAuthStore();
@@ -23,21 +27,14 @@ const confirm = useConfirm()
 const items = ref([
     {
         label: 'Menu',
+    },
+    {
         items: [
             {
                 label: 'New Transaction',
                 icon: 'pi pi-plus',
                 command: () => (showForm())       
             },
-            {
-                label: 'Filter',
-                icon: 'pi pi-filter'
-            }
-        ]
-    },
-    {
-        label: 'Profile',
-        items: [
             {
                 label: 'Settings',
                 icon: 'pi pi-cog'
@@ -46,7 +43,7 @@ const items = ref([
                 label: 'Logout',
                 icon: 'pi pi-sign-out',
                 command: ()=>(logout())
-            }
+            },
         ]
     }
 ]);

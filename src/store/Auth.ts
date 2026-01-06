@@ -6,6 +6,7 @@ interface User {
   id: number;
   email: string;
   name: string;
+  profile_image_url?: string;
 }
 
 interface Login {

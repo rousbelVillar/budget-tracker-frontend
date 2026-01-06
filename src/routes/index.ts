@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
 import AuthPage from "../components/AuthPage.vue";
 import { useAuthStore } from "../store/Auth";
-import { getCookie } from "../globals/globals";
 
 export const routes = [
   {

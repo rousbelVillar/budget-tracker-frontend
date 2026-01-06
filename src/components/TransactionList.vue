@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white p-6 rounded shadow mt-6" style="min-width: 49vw;">
+    <div v-if="!transactionStore.loading" class="bg-white p-6 rounded shadow mt-6">
       <h2 class="text-xl font-bold mb-4">Transactions</h2>
       <Message test-suite="no-transactions-message"  v-if="transactions.length === 0">No transactions yet.</Message>
       <DataTable :value="transactions" stripedRows paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 20rem">
@@ -15,31 +15,32 @@
               {{ formatCurrency(slotProps.data.amount) }}
             </template>
         </Column>
-        <Column field="date" header="Date" style="width: 25%;"/>
+        <Column class="w-[8em]" field="date" header="Date"/>
         <Column>
           <template #body="slotProps">
-            <Button class="mt-2 ml-1 float-right" test-suite="cancel-new-category" label="Remove" size="small" variant="outlined"  @click="confirmDeletion(slotProps.data.id)" severity="danger"/>
+            <span class="pi pi-trash cursor-pointer"  @click="confirmDeletion(slotProps.data.id)"></span>
           </template>
         </Column>
       </DataTable>
+    </div>
+
+    <div v-else>
+      <Skeleton width="10rem" height="4rem"></Skeleton>
     </div>
   </template>
   <script lang="ts" setup>
 import {computed} from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import { Message,Button, Tag, useConfirm} from 'primevue';
+import { Message, Tag, useConfirm, Skeleton} from 'primevue';
 import { useToast } from "primevue/usetoast";
 import { useTransactionStore } from '../store/Transactions';
 import { formatCurrency, getTypeSeverity } from '../globals/globals';
-import { useDashboardStore } from '../store/Dashboard';
-
 
 const confirm = useConfirm()
 const toast = useToast();
-const store = useTransactionStore();
-const transactions = computed(() => store.transactions);
-const dashboardStore = useDashboardStore();
+const transactionStore = useTransactionStore();
+const transactions = computed(() => transactionStore.transactions);
 
 
 const confirmDeletion = (id:number) => {
@@ -58,12 +59,14 @@ const confirmDeletion = (id:number) => {
             severity: 'danger'
         },
         accept: async ()  => {
-            await store.removeTransaction(id)
+            await transactionStore.removeTransaction(id)
             .then(()=>{
-              store.fetchTransactions(dashboardStore.selectedMonth);
+              transactionStore.fetchTransactions();
               toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
             }).catch(()=>{
               toast.add({ severity: 'error', summary: 'Unable to delete', detail: 'Unable to delete transaction', life: 3000 });
+            }).finally(()=>{
+              transactionStore.loading = false;
             })
         },
         // reject: () => {
