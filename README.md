@@ -17,16 +17,6 @@
 
 ---
 
-## 📸 Demo / Screenshots
-
-> Dashboard showing transaction list, filters, and spending charts.
-
-```text
-[ Add dashboard GIF or screenshots here ]
-```
-
----
-
 ## 🧠 What This Project Demonstrates
 
 - Frontend system design with **Vue 3 + Composition API**
