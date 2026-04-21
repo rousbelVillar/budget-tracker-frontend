@@ -54,7 +54,6 @@ import { useCategorieStore } from '../store/Categories'
 import { formatDateYYMMDD, showToast } from '../globals/globals'
 import { useTransactionStore } from '../store/Transactions';
 import { Category } from '../interfaces/Category';
-import { Q } from 'vitest/dist/chunks/reporters.d.C-cu31ET';
 
 const categoriesStore = useCategorieStore();
 const transactionStore = useTransactionStore();
