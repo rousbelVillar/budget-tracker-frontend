@@ -8,14 +8,15 @@
         <div>
           <label class="font-bold block mb-2">Amount</label>
           <div class="flex flex-col gap-1">
-            <div v-for="amount in suggestedAmounts" :key="amount.value" class="flex items-center">
+            <div v-for="amount in suggestedAmounts" :key="amount.label" class="flex items-center">
               <RadioButton 
-                v-model="filters.selectedAmount"
-                :inputId="amount.value"
-                :value="amount.value"
+                v-model="filters.max_amount"
+                :inputId="amount.label"
+                :value="amount.max"
+                @change="filterAmount($event)"
                 class="mr-2"
               />
-              <label :for="amount.value" class="text-sm">{{ amount.label }}</label>
+              <label :for="amount.label" class="text-sm">{{ amount.label }}</label>
             </div>
           </div>
         </div>
@@ -54,22 +55,21 @@ import { useCategorieStore } from '../store/Categories'
 import { formatDateYYMMDD, showToast } from '../globals/globals'
 import { useTransactionStore } from '../store/Transactions';
 import { Category } from '../interfaces/Category';
-import { Q } from 'vitest/dist/chunks/reporters.d.C-cu31ET';
 
 const categoriesStore = useCategorieStore();
 const transactionStore = useTransactionStore();
 const toast = useToast()
 const filters = ref({
   dateRange: [],
-  selectedAmount: null,
+  max_amount: null,
   category: [],
 })
 
 const suggestedAmounts = [
-  { label: '< $50', value: '<50' },
-  { label: '$50 - $100', value: '50-100' },
-  { label: '$100 - $500', value: '100-500' },
-  { label: '> $500', value: '>500' },
+  { label: '< $50', max:50 },
+  { label: '$50 - $100', max:100 },
+  { label: '$100 - $500', max:500},
+  { label: '> $500', max: 0 },
 ]
 
 const categories = computed(()=> categoriesStore.categories);
@@ -99,6 +99,15 @@ const handleDateRange = async () =>{
       transactionStore.loading = false;
     }).finally(()=> transactionStore.loading = false);
   }
+}
+
+const filterAmount = async (event:any)=>{
+  transactionStore.filters.max_amount = event.target.value;
+
+  await transactionStore.fetchTransactions().catch(()=>{
+    showToast(toast,"Unable to retrieve transactions","error");
+      transactionStore.loading = false;
+    }).finally(()=> transactionStore.loading = false);
 }
 
 onMounted(async ()=>{

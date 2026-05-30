@@ -59,7 +59,7 @@ export const useAuthStore = defineStore("auth", {
           },
           {
             withCredentials: true,
-          }
+          },
         );
         this.user = res.data;
         this.authenticated = true;
@@ -83,7 +83,7 @@ export const useAuthStore = defineStore("auth", {
         this.authenticated = true;
         return true;
       } catch (err: any) {
-        this.error = err.response?.data?.message || "Logout failed";
+        this.error = err.response?.data?.message || "Registration failed";
         this.authenticated = false;
       } finally {
         this.isLoading = false;
