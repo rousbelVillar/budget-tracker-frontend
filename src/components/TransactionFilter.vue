@@ -37,7 +37,7 @@
                   @change="filterCategories($event)"
                   placeholder="Select Categories"
                   display="chip"
-                  :maxSelectedLabels="3" 
+                  :maxSelectedLabels="1" 
                   class="w-full md:w-80"             
                   inputClass="text-sm px-2 py-1"
                   panelClass="text-sm"/>
@@ -77,9 +77,13 @@ const dateRange = ref();
 
 
 const filterCategories = async (event:any)=>{
-  const categoryEvent : Category[] = event.value;
-  transactionStore.filters.categories = categoryEvent.map((c:Category)=> c.name).join(",");
-  await transactionStore.fetchTransactions()
+  if(!event.value.length){
+    transactionStore.filters.categories = undefined
+  }else{
+    const categoryEvent : Category[] = event.value;
+    transactionStore.filters.categories = categoryEvent.map((c:Category)=> c.name).join(",");
+  }
+    await transactionStore.fetchTransactions()
     .catch(()=>{
     showToast(toast,"Unable to retrieve transactions","error");
     transactionStore.loading = false;
