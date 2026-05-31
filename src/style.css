@@ -58,3 +58,12 @@ button:focus-visible {
   margin: 0 auto;
   text-align: center;
 }
+
+.p-fileupload-basic span {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
+}

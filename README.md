@@ -7,17 +7,17 @@
 
 ---
 
-## ✨ Highlights
+## Highlights
 
-- **Real-world domain:** Personal finance, authentication, dashboards, and data visualization
-- **Scalable architecture:** Vue 3 + TypeScript made to scale seamlessly.
-- **State management:** Centralized store for auth, transactions, filters, and categories
-- **Data visualization:** Interactive charts for spending summaries and category breakdowns
+- Personal finance, authentication, dashboards, and data visualization
+- **Scalable architecture:** Vue 3 + TypeScript scalable.
+- **State management:** Centralized store for auth, transactions, filters, and categories.
+- **Data visualization:** Interactive charts for spending summaries and category breakdowns.
 - **Testing:** Unit tests with mocked data for critical components
 
 ---
 
-## 🧠 What This Project Demonstrates
+## What This Project Demonstrates
 
 - Frontend system design with **Vue 3 + Composition API**
 - Component testing with **mocked state and data**
@@ -27,7 +27,7 @@
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Category         | Tools                                   |
 | ---------------- | --------------------------------------- |
@@ -39,19 +39,9 @@
 | Styling          | CSS                                     |
 | Testing          | Vitest / Vue Test Utils                 |
 
----
-
-## 📈 Performance & UX
-
-- Reactive updates for charts and lists
-- Filtered views without unnecessary re-renders
-- Optimized state access via store modules
-
-## 👤 Author
+## Author
 
 Rousbel Villar
 
 - GitHub: [https://github.com/rousbelVillar](https://github.com/rousbelVillar)
 - LinkedIn: [https://www.linkedin.com/in/rousbel-villar-2496628b/](https://www.linkedin.com/in/rousbel-villar-2496628b/)
-
-> ⭐ This project is designed to showcase frontend engineering skills.
