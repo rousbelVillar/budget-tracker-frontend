@@ -2,10 +2,20 @@
   <div class="flex justify-left">
     <Card>
       <template #title>
-          <Avatar
-            image="https://picsum.photos/200/300"
+          <Avatar 
+            v-if="user?.profile_image_url"
+            :image="user.profile_image_url"
             shape="circle"
-            size="large"
+            size="xlarge"
+            alt="Profile picture"
+            >
+
+          </Avatar>
+          <Avatar
+            v-else
+            image="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+            shape="circle"
+            size="xlarge"
           />
       </template>
       <template #content>
@@ -23,9 +33,9 @@ import { useAuthStore } from '../store/Auth';
 import { Avatar, Card, Tag } from 'primevue';
 
 const authStore = useAuthStore()
-const user = computed(()=> authStore.user)
+const user= computed(()=> authStore.user)
 
 onMounted(async () => {
-  await authStore.fetchProfile()
+  await authStore.fetchProfile();
 })
 </script>
