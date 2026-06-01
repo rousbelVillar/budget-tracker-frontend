@@ -78,15 +78,16 @@ const isLoading = computed(() => auth.isLoading);
 const error = computed(() => auth.error);
 const router = useRouter();
 const src:any = ref(null);
+const selectedFile = ref<File | null>(null);
 
 function onFileSelect(event:any) {
     const file :File = event.files[0];
     const reader = new FileReader();
+    selectedFile.value = file;
 
     reader.onload = async (e:any) => {
         src.value = e.target.result;
     };
-
     reader.readAsDataURL(file);
     
 }
@@ -100,9 +101,9 @@ const onSubmit = async () => {
   const user:User = {
     name:name.value,
     email:email.value,
-    profile_image : src.value._rawValue ? src.value._rawValue : undefined
   } 
-  await auth.register(user,password.value);
+  
+  await auth.register(user,password.value,selectedFile.value);
   router.push("/dashboard");
 };
 </script>

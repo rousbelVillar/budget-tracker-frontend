@@ -6,7 +6,7 @@ export interface User {
   id?: number;
   email: string;
   name: string;
-  profile_image?: File;
+  profile_image_url?: string;
 }
 
 export interface Login {
@@ -39,6 +39,9 @@ export const useAuthStore = defineStore("auth", {
         });
         this.user = res.data;
         this.authenticated = true;
+        if (this.user?.profile_image_url) {
+          this.user.profile_image_url = `http://localhost:8000/auth/users/${this.user.id}/picture`;
+        }
         return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Failed to fetch user";
@@ -73,7 +76,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async register(user: User, password: string) {
+    async register(user: User, password: string, profile_pic: any) {
       this.isLoading = true;
       this.error = null;
 
@@ -82,8 +85,8 @@ export const useAuthStore = defineStore("auth", {
         formData.append("name", user.name);
         formData.append("email", user.email);
         formData.append("password", password);
-        if (user.profile_image) {
-          formData.append("profile_pic", user.profile_image);
+        if (profile_pic) {
+          formData.append("profile_pic", profile_pic);
         }
 
         const res = await API.post("/auth/register", formData, {
