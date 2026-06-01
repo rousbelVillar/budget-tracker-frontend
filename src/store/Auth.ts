@@ -2,14 +2,14 @@ import { defineStore } from "pinia";
 import API from "../api";
 import { getCookie } from "../globals/globals";
 
-interface User {
-  id: number;
+export interface User {
+  id?: number;
   email: string;
   name: string;
-  profile_image_url?: string;
+  profile_image?: File;
 }
 
-interface Login {
+export interface Login {
   emailUser: string;
   password: string;
 }
@@ -73,12 +73,23 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async register(name: string, email: string, password: string) {
+    async register(user: User, password: string) {
       this.isLoading = true;
       this.error = null;
 
       try {
-        const res = await API.post("/auth/register", { name, email, password });
+        const formData = new FormData();
+        formData.append("name", user.name);
+        formData.append("email", user.email);
+        formData.append("password", password);
+        if (user.profile_image) {
+          formData.append("profile_pic", user.profile_image);
+        }
+
+        const res = await API.post("/auth/register", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
         this.user = res.data;
         this.authenticated = true;
         return true;

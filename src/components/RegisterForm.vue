@@ -64,6 +64,7 @@ import { computed, ref } from "vue";
 import { useAuthStore } from "../store/Auth";
 import { Button, InputText, Password, Toast, FileUpload } from "primevue";
 import { useRouter } from "vue-router";
+import { User} from "../store/Auth";
 
 const name = ref("");
 const lastName = ref("");
@@ -76,10 +77,10 @@ const auth = useAuthStore();
 const isLoading = computed(() => auth.isLoading);
 const error = computed(() => auth.error);
 const router = useRouter();
-const src = ref(null);
+const src:any = ref(null);
 
 function onFileSelect(event:any) {
-    const file = event.files[0];
+    const file :File = event.files[0];
     const reader = new FileReader();
 
     reader.onload = async (e:any) => {
@@ -87,7 +88,7 @@ function onFileSelect(event:any) {
     };
 
     reader.readAsDataURL(file);
-    console.log("image added");
+    
 }
 
 const onSubmit = async () => {
@@ -96,7 +97,12 @@ const onSubmit = async () => {
     auth.error = "Passwords do not match";
     return;
   }
-  await auth.register(name.value, email.value, password.value);
+  const user:User = {
+    name:name.value,
+    email:email.value,
+    profile_image : src.value._rawValue ? src.value._rawValue : undefined
+  } 
+  await auth.register(user,password.value);
   router.push("/dashboard");
 };
 </script>
