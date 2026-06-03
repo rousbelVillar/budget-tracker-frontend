@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
 import API from "../api";
 import { Transaction, TransactionForm } from "../interfaces/Transaction";
 import { formatTransactionDate, getCookie } from "../globals/globals";
@@ -39,7 +38,7 @@ export const useTransactionStore = defineStore("transactions", {
           headers: {
             "X-CSRF-TOKEN": csrfToken ?? "",
           },
-        }
+        },
       );
     },
     async removeTransaction(id: number) {

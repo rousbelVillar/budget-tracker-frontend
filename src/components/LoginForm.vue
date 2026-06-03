@@ -23,6 +23,7 @@
             icon="pi pi-sign-in"
             :loading="isLoading"
             class="w-full"
+            severity="info"
             ></Button>
             <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
         </form>

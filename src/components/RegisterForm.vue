@@ -35,22 +35,25 @@
           required
         ></Password>
       </div>
-
-      <FileUpload
-        mode="basic"
-        name="demo[]"
-        url="/api/upload"
-        accept="image/*"
-        uploadLabel="Test3"
-        :maxFileSize="1000000"
-        :chooseButtonProps="{severity:'contrast' , size:'small', icon:'pi pi-images'}"
-        @select="onFileSelect"
-      >
-      </FileUpload>
+      <label for="confirmPassword" class="flex">Profile Image</label>
+      <div class="flex">
+          <FileUpload
+          mode="basic"
+          name="demo[]"
+          url="/api/upload"
+          accept="image/*"
+          uploadLabel="Test3"
+          :maxFileSize="1000000"
+          :chooseButtonProps="{severity:'contrast' , size:'small', icon:'pi pi-cog'}"
+          @select="onFileSelect"
+        >
+        </FileUpload>
+      </div>
       <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
       <Button
         type="submit"
         label="Sign Up"
+        severity="info"
         :loading="isLoading"
         class="w-full"
       ></Button>

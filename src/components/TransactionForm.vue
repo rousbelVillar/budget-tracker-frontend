@@ -90,7 +90,6 @@ import { showToast } from '../globals/globals';
   const toast = useToast();
   const dialogRef:any = inject('dialogRef');
   const transactionStore = useTransactionStore()
-  const dashboardStore = useDashboardStore()
 
 
   const addCategory =  async () => {
@@ -143,7 +142,7 @@ import { showToast } from '../globals/globals';
   }
 
   onMounted( async ()  => {
-     await categoriesStore.fetchCategories().then(console.log)
+     await categoriesStore.fetchCategories()
   })
 
 </script>
