@@ -39,9 +39,6 @@ export const useAuthStore = defineStore("auth", {
         });
         this.user = res.data;
         this.authenticated = true;
-        if (this.user?.profile_image_url) {
-          this.user.profile_image_url = `http://localhost:8000/auth/users/${this.user.id}/picture`;
-        }
         return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Failed to fetch user";
