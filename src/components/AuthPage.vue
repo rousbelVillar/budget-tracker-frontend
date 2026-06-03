@@ -4,8 +4,8 @@
     <div class="min-h-screen flex items-center justify-center">
         <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
             <div class="flex justify-between mb-6">
-                <Button class=" rounded-r-none" label="Login" @click="showLogin = true" :outlined="!showLogin"></Button>
-                <Button class=" rounded-r-none" label="Register" @click="showLogin = false" :outlined="showLogin"></Button>
+                <Button class=" rounded-r-none" label="Login" @click="showLogin = true" :outlined="!showLogin" severity="info"></Button>
+                <Button class=" rounded-r-none" label="Register" @click="showLogin = false" :outlined="showLogin" severity="info"></Button>
             </div>
             <LoginForm v-if="showLogin"/>
             <RegisterForm v-else/>

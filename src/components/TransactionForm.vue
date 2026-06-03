@@ -142,7 +142,7 @@ import { showToast } from '../globals/globals';
   }
 
   onMounted( async ()  => {
-     await categoriesStore.fetchCategories().then(console.log)
+     await categoriesStore.fetchCategories()
   })
 
 </script>

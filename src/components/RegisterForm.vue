@@ -53,6 +53,7 @@
       <Button
         type="submit"
         label="Sign Up"
+        severity="info"
         :loading="isLoading"
         class="w-full"
       ></Button>
