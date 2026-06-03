@@ -14,8 +14,6 @@ import { onMounted } from "vue";
 import { getCookie } from "./globals/globals";
 const auth = useAuthStore();
 
-
-
   onMounted(() =>  {
     auth.authenticated = !!getCookie('csrf_access_token');
     if(auth.authenticated){
