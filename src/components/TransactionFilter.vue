@@ -53,7 +53,7 @@
                   inputClass="text-sm px-2 py-1"
                   panelClass="text-sm"/>
           </div>
-          <Button class="relative right-[3vw] mt-3" label="Clear filter" icon="pi pi-refresh" severity="info" @click="clearFilter()"/>
+          <Button class="relative right-[1.5vw] mt-3" label="Clear filter" icon="pi pi-times-circle" severity="info" size="small" @click="clearFilter()"/>
         </div>
 
       </div>

@@ -11,6 +11,8 @@ import { DialogService } from "primevue";
 import { createPinia } from "pinia";
 import router from "./routes";
 import App from "./App.vue";
+import "cropperjs/dist/cropper.css";
+import "vue-picture-cropper/style.css";
 
 const app = createApp(App);
 app.use(PrimeVue, {

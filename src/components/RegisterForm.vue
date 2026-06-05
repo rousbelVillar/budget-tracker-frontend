@@ -37,17 +37,7 @@
       </div>
       <label for="confirmPassword" class="flex">Profile Image</label>
       <div class="flex">
-          <FileUpload
-          mode="basic"
-          name="demo[]"
-          url="/api/upload"
-          accept="image/*"
-          uploadLabel="Test3"
-          :maxFileSize="1000000"
-          :chooseButtonProps="{severity:'contrast' , size:'small', icon:'pi pi-cog'}"
-          @select="onFileSelect"
-        >
-        </FileUpload>
+        <FileUpload @get-file="getImage"/>
       </div>
       <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
       <Button
@@ -65,9 +55,10 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useAuthStore } from "../store/Auth";
-import { Button, InputText, Password, Toast, FileUpload } from "primevue";
+import { Button, InputText, Password, Toast } from "primevue";
 import { useRouter } from "vue-router";
 import { User} from "../store/Auth";
+import FileUpload from "./FileUpload.vue";
 
 const name = ref("");
 const lastName = ref("");
@@ -80,19 +71,10 @@ const auth = useAuthStore();
 const isLoading = computed(() => auth.isLoading);
 const error = computed(() => auth.error);
 const router = useRouter();
-const src:any = ref(null);
 const selectedFile = ref<File | null>(null);
 
-function onFileSelect(event:any) {
-    const file :File = event.files[0];
-    const reader = new FileReader();
-    selectedFile.value = file;
-
-    reader.onload = async (e:any) => {
-        src.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-    
+function getImage(file: File) {
+  selectedFile.value = file;
 }
 
 const onSubmit = async () => {
@@ -104,8 +86,7 @@ const onSubmit = async () => {
   const user:User = {
     name:name.value,
     email:email.value,
-  } 
-  
+  }   
   await auth.register(user,password.value,selectedFile.value);
   router.push("/dashboard");
 };

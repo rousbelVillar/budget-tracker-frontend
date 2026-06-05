@@ -65,7 +65,6 @@ import {InputText, InputNumber, Select,Button, Message, useToast} from 'primevue
 import { mockTransactionResolver, transactionFormResolver } from '../validation/resolvers';
 import { inject } from "vue";
 import { useTransactionStore } from '../store/Transactions';
-import { useDashboardStore } from '../store/Dashboard';
 import { useCategorieStore } from '../store/Categories';
 import { showToast } from '../globals/globals';
 
