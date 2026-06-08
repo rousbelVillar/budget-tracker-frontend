@@ -49,7 +49,6 @@ const handleLogin = async ()=>{
    if(!emailUser.value || !password.value) return;
    const success = await login({ emailUser:emailUser.value, password : password.value});
    if(success){
-      authStore.authenticated = true;
       router.push('/dashboard')
    }
 }
