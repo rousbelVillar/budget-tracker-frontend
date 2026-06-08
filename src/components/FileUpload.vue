@@ -6,9 +6,10 @@
   </div>
 
   <template v-else>
-    <p class="truncate w-[10em]">{{ fileName }}</p>
-    <p>{{ fileName.split('.').pop() }}</p>
-    <Button icon="pi pi-check" rounded aria-label="File uploaded check" />
+    <div class="flex gap-2">
+        <p class="truncate w-[10em]">{{ fileName }}<span v-if="fileName.length < 14"><Button disabled="true" class="ml-[5px]" icon="pi pi-check" rounded aria-label="File uploaded check" size="small"/></span></p>
+        <p v-if="fileName.length > 14" class="relative bottom-[7px] right-[13px]">{{ fileName.split('.').pop() }}<span><Button class="ml-2" disabled="true" icon="pi pi-check" rounded aria-label="File uploaded check" size="small"/></span></p>
+    </div>
   </template>
 
   <Dialog v-model:visible="visible" modal header="Crop Image" :style="{ width: '25rem' }">
