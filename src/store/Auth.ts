@@ -17,7 +17,7 @@ export interface Login {
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as User | null,
-    isLoading: true,
+    isLoading: false,
     authenticated: false,
     error: null as string | null,
   }),
@@ -58,7 +58,6 @@ export const useAuthStore = defineStore("auth", {
           },
         );
         this.user = res.data;
-        this.authenticated = true;
         await this.fetchProfile();
         return true;
       } catch (err: any) {
@@ -88,13 +87,13 @@ export const useAuthStore = defineStore("auth", {
         });
 
         this.user = res.data;
-        this.authenticated = true;
         return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Registration failed";
         this.authenticated = false;
       } finally {
         this.isLoading = false;
+        this.authenticated = true;
       }
     },
 
