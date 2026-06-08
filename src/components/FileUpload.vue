@@ -1,21 +1,25 @@
 <template>
-  <input type="file" accept="image/*" @change="onFileSelect" />
-  <VuePictureCropper
-    ref="vpcRef"
-    :img="cropperProps.img"
-    :options="cropperProps.options"
-    :preset-mode="cropperProps.presetMode"
-  />
-  <Button severity="info" size="small" @click="onCrop">Crop</Button>
-</template>
 
+  <input type="file" accept="image/*" @change="onFileSelect" class="truncate"/>
+
+  <Dialog v-model:visible="visible" modal header="Crop Image" :style="{ width: '25rem' }">
+        <VuePictureCropper
+            ref="vpcRef"
+            :img="cropperProps.img"
+            :options="cropperProps.options"
+            :preset-mode="cropperProps.presetMode"
+        />
+        <Button severity="info" size="small" @click="onCrop" class="mt-2">Crop</Button>
+  </Dialog>
+</template>
 <script setup lang="ts">
-    import { Button } from 'primevue'
+    import { Button, Dialog} from 'primevue'
     import { ref, computed } from 'vue'
     import VuePictureCropper, { type VuePictureCropperProps } from 'vue-picture-cropper'
 
     const originalPreview = ref<string | null>(null)
-    const presetSize = ref(300) 
+    const presetSize = ref(250);
+    const visible = ref(false);
     const cropperProps = computed<VuePictureCropperProps>(() => ({
     img: originalPreview.value ?? '',
     options: {
@@ -35,6 +39,7 @@
     const emit = defineEmits<{(e:'get-file',file:File):void}>()
 
     function onFileSelect(event: Event) {
+    visible.value = true;
     const file = (event.target as HTMLInputElement).files?.[0]
     if (!file) return
     const reader = new FileReader()
@@ -48,7 +53,7 @@
     const file = await cropper.value?.getFile({ fileName: 'avatar.png' })
         if(file){
             emit('get-file',file);
+            visible.value = false;
         }
-
     }
 </script>

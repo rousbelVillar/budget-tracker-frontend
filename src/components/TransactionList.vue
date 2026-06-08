@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!transactionStore.loading" class="bg-white p-6 rounded shadow mt-6">
+    <div class="bg-white p-6 rounded shadow mt-6">
       <h2 class="text-xl font-bold mb-4">Transactions</h2>
       <Message test-suite="no-transactions-message"  v-if="transactions.length === 0">No transactions yet.</Message>
       <DataTable :value="transactions" stripedRows paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" tableStyle="min-width: 20rem">
@@ -22,10 +22,6 @@
           </template>
         </Column>
       </DataTable>
-    </div>
-
-    <div v-else>
-      <Skeleton width="10rem" height="4rem"></Skeleton>
     </div>
   </template>
   <script lang="ts" setup>

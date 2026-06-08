@@ -17,7 +17,7 @@ export interface Login {
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as User | null,
-    isLoading: false,
+    isLoading: true,
     authenticated: false,
     error: null as string | null,
   }),
@@ -27,7 +27,6 @@ export const useAuthStore = defineStore("auth", {
   },
   actions: {
     async fetchProfile() {
-      this.isLoading = true;
       this.error = null;
       const csrfToken = getCookie("csrf_access_token");
       try {
@@ -38,12 +37,9 @@ export const useAuthStore = defineStore("auth", {
           withCredentials: true,
         });
         this.user = res.data;
-        this.authenticated = true;
         return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Failed to fetch user";
-      } finally {
-        this.isLoading = false;
       }
     },
 
@@ -70,6 +66,7 @@ export const useAuthStore = defineStore("auth", {
         this.authenticated = false;
       } finally {
         this.isLoading = false;
+        this.authenticated = true;
       }
     },
 
