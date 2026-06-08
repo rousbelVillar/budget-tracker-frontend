@@ -20,8 +20,7 @@
   import { useAuthStore } from '../store/Auth.js';
 
   const transactionStore = useTransactionStore();
-  const authStore = useAuthStore();
-  const loadingCondition = !transactionStore.loading && !authStore.isLoading;
+  const loadingCondition = !transactionStore.loading;
   const toast = useToast();
   onMounted(() => {
     transactionStore.fetchTransactions()

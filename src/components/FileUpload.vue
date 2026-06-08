@@ -1,6 +1,15 @@
 <template>
 
-  <input type="file" accept="image/*" @change="onFileSelect" class="truncate"/>
+
+  <div v-if="fileNameVisibility">
+    <input type="file" accept="image/*" @change="onFileSelect" class="truncate" />
+  </div>
+
+  <template v-else>
+    <p class="truncate w-[10em]">{{ fileName }}</p>
+    <p>{{ fileName.split('.').pop() }}</p>
+    <Button icon="pi pi-check" rounded aria-label="File uploaded check" />
+  </template>
 
   <Dialog v-model:visible="visible" modal header="Crop Image" :style="{ width: '25rem' }">
         <VuePictureCropper
@@ -20,6 +29,8 @@
     const originalPreview = ref<string | null>(null)
     const presetSize = ref(250);
     const visible = ref(false);
+    const fileNameVisibility = ref(true);
+    const fileName = ref("");
     const cropperProps = computed<VuePictureCropperProps>(() => ({
     img: originalPreview.value ?? '',
     options: {
@@ -40,6 +51,7 @@
 
     function onFileSelect(event: Event) {
     visible.value = true;
+    
     const file = (event.target as HTMLInputElement).files?.[0]
     if (!file) return
     const reader = new FileReader()
@@ -47,6 +59,8 @@
         originalPreview.value = e.target?.result as string
     }
     reader.readAsDataURL(file)
+    fileNameVisibility.value = false;
+    fileName.value = file.name;
     }
 
     async function onCrop() {
