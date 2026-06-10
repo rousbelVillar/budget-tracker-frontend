@@ -66,6 +66,7 @@ const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const localErrorValue = ref("");
+const telephone = ref("");
 
 const auth = useAuthStore();
 const isLoading = computed(() => auth.isLoading);
@@ -84,8 +85,9 @@ const onSubmit = async () => {
     return;
   }
   const user:User = {
-    name:name.value,
     email:email.value,
+    name:name.value,
+    lastName: lastName.value
   }   
   await auth.register(user,password.value,selectedFile.value);
   router.push("/dashboard");

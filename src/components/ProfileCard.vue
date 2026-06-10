@@ -17,7 +17,8 @@
             shape="circle"
             size="xlarge"
           />
-          <h2 class="text-lg font-semibold">{{ (user?.name ) || 'Unnamed User' }}</h2>
+          <h2 v-if="user" class="text-lg font-semibold">{{ (user?.name) + " " + (user?.lastName)}}</h2> 
+          <i v-else class="pi pi-spin pi-spinner" style="font-size: 2rem"></i> 
       </template>
     </Card>
 </template>
