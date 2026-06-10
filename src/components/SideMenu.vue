@@ -16,6 +16,8 @@ import { useAuthStore } from "../store/Auth";
 import { useRouter } from "vue-router";
 import TransactionFilter from "./TransactionFilter.vue";
 import ProfileCard from "./ProfileCard.vue";
+import ProfileForm from "./ProfileForm.vue";
+
 
 const dialog = useDialog();
 const auth = useAuthStore();
@@ -33,11 +35,12 @@ const items = ref([
             {
                 label: 'New Transaction',
                 icon: 'pi pi-plus',
-                command: () => (showForm())       
+                command: () => (showTransactionForm())       
             },
             {
-                label: 'Settings',
-                icon: 'pi pi-cog'
+                label: 'User Settings',
+                icon: 'pi pi-cog',
+                command: () => (showProfileForm())   
             },
             {
                 label: 'Logout',
@@ -48,10 +51,26 @@ const items = ref([
     }
 ]);
 
-const showForm = () => {
+const showTransactionForm = () => {
     dialog.open(TransactionForm, {
         props: {
             header: 'New Transaction',
+            style: {
+                width: '25vw',
+            },
+            breakpoints:{
+                '960px': '75vw',
+                '640px': '90vw'
+            },
+            modal: true
+        }
+    });
+}
+
+const showProfileForm = () => {
+    dialog.open(ProfileForm, {
+        props: {
+            header: 'User Settings',
             style: {
                 width: '25vw',
             },

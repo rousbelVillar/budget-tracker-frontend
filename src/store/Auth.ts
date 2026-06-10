@@ -5,8 +5,9 @@ import { getCookie } from "../globals/globals";
 export interface User {
   id?: number;
   email: string;
-  name: string;
   profile_image_url?: string;
+  name: string;
+  lastName: string;
 }
 
 export interface Login {
@@ -36,7 +37,7 @@ export const useAuthStore = defineStore("auth", {
           },
           withCredentials: true,
         });
-        this.user = res.data;
+        this.user = res.data as User;
         return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Failed to fetch user";
@@ -75,9 +76,11 @@ export const useAuthStore = defineStore("auth", {
 
       try {
         const formData = new FormData();
-        formData.append("name", user.name);
         formData.append("email", user.email);
         formData.append("password", password);
+        formData.append("lastName", user.lastName);
+        formData.append("name", user.name);
+
         if (profile_pic) {
           formData.append("profile_pic", profile_pic);
         }
@@ -87,13 +90,14 @@ export const useAuthStore = defineStore("auth", {
         });
 
         this.user = res.data;
+        this.authenticated = true;
+
         return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Registration failed";
         this.authenticated = false;
       } finally {
         this.isLoading = false;
-        this.authenticated = true;
       }
     },
 
