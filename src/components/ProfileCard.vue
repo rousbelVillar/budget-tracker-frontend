@@ -1,5 +1,5 @@
-<template>
-    <Card>
+<template >
+    <Card v-if="user" >
       <template #title class="profile-card-title">
           <Avatar 
             v-if="user?.profileImage"
@@ -17,11 +17,15 @@
             shape="circle"
             size="xlarge"
           />
-          <h2 v-if="user" class="text-lg font-semibold">{{ (user?.name) + " " + (user?.lastName)}}</h2> 
-          <i v-else class="pi pi-spin pi-spinner" style="font-size: 2rem"></i> 
+          <h2 class="text-lg font-semibold">{{ (user?.name) + " " + (user?.lastName)}}</h2> 
       </template>
     </Card>
+    <template v-else>
+    <i  class="pi pi-spin pi-spinner" style="font-size: 2rem"></i> 
+  </template>
 </template>
+
+
 
 <script setup lang="ts" >
 import { onMounted, computed } from 'vue';

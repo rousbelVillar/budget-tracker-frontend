@@ -1,9 +1,10 @@
 <template>
 
+    <div class="flex" v-if="fileNameVisibility">
+        <Button severity="info" size="small" @click="triggerFileInput" class="truncate">Browse</Button>
+        <input id="fileButton" type="file" accept="image/*" @change="onFileSelect" class="truncate hidden" ref="fileInput"/>
+    </div>
 
-  <div v-if="fileNameVisibility">
-    <input type="file" accept="image/*" @change="onFileSelect" class="truncate" />
-  </div>
 
   <template v-else>
     <div class="flex gap-2">
@@ -32,6 +33,7 @@
     const visible = ref(false);
     const fileNameVisibility = ref(true);
     const fileName = ref("");
+    const fileInput = ref<HTMLInputElement | null>(null)    
     const cropperProps = computed<VuePictureCropperProps>(() => ({
     img: originalPreview.value ?? '',
     options: {
@@ -51,24 +53,28 @@
     const emit = defineEmits<{(e:'get-file',file:File):void}>()
 
     function onFileSelect(event: Event) {
-    visible.value = true;
-    
-    const file = (event.target as HTMLInputElement).files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = (e) => {
-        originalPreview.value = e.target?.result as string
+        visible.value = true;
+        const file = (event.target as HTMLInputElement).files?.[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = (e) => {
+            originalPreview.value = e.target?.result as string
+        }
+        reader.readAsDataURL(file)
+        fileName.value = file.name;
     }
-    reader.readAsDataURL(file)
-    fileNameVisibility.value = false;
-    fileName.value = file.name;
+
+    function triggerFileInput(){
+        fileInput.value?.click();
     }
+
 
     async function onCrop() {
     const file = await cropper.value?.getFile({ fileName: 'avatar.png' })
         if(file){
             emit('get-file',file);
             visible.value = false;
+            fileNameVisibility.value = false;
         }
     }
 </script>

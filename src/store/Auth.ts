@@ -38,6 +38,15 @@ export const useAuthStore = defineStore("auth", {
           withCredentials: true,
         });
         this.user = res.data as User;
+        this.user.name = this.user.name.replace(
+          this.user.name.charAt(0),
+          this.user.name.charAt(0).toUpperCase(),
+        );
+        this.user.lastName = this.user.lastName.replace(
+          this.user.lastName.charAt(0),
+          this.user.lastName.charAt(0).toUpperCase(),
+        );
+
         return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Failed to fetch user";
