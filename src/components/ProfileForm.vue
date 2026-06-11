@@ -14,7 +14,7 @@
         <InputText id="lastName" v-model="lastName" class="w-full" required />
       </div>
       <div class="flex mt-3 justify-end gap-3">
-            <Button label="Cancel" severity="info" variant="outlined" />
+            <Button label="Cancel" severity="info" variant="outlined" @click="closeDialog()" />
             <Button label="Update" severity="info" />
       </div>
     </div>
@@ -23,18 +23,24 @@
 
 <script lang="ts" setup>
 import { Avatar, InputText, Button } from 'primevue';
-import { onMounted, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { useAuthStore } from '../store/Auth';
+
 
 const name = ref("");
 const lastName = ref("");
 const image = ref("");
 const authStore = useAuthStore();
+const dialogRef:any = inject('dialogRef');
 
 onMounted(async () => {
   name.value = authStore.user?.name as string ?? '';
   lastName.value = authStore.user?.lastName as string ?? '';  
   image.value = authStore.user?.profileImage as string ?? '';
 })
+
+  const closeDialog = () => {
+    dialogRef.value.close();
+  }
 
 </script>

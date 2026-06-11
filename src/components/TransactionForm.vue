@@ -49,6 +49,7 @@
           severity="info"
           test-suite="transaction-cancel"
           class="relative left-3"
+          @click="closeDialog()"
         >
           Cancel
         </Button>
