@@ -5,7 +5,7 @@ import { getCookie } from "../globals/globals";
 export interface User {
   id?: number;
   email: string;
-  profile_image_url?: string;
+  profileImage?: string;
   name: string;
   lastName: string;
 }

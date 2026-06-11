@@ -2,8 +2,8 @@
     <Card>
       <template #title class="profile-card-title">
           <Avatar 
-            v-if="user?.profile_image_url"
-            :image="user.profile_image_url"
+            v-if="user?.profileImage"
+            :image="user.profileImage"
             shape="circle"
             size="xlarge"
             alt="Profile picture"
