@@ -22,14 +22,14 @@
         <Message v-if="$form.category?.invalid" severity="error" size="small" variant="simple">{{ $form.category.errors }}</Message>
       </FormField>
       <FormField>
-        <Button test-suite="add-new-category" severity="info" class="float-left" @click="show_add_category =!show_add_category">+ Add Category</Button>
+        <Button size="small" test-suite="add-new-category" severity="info" class="relative left-[5em] float-left" @click="show_add_category =!show_add_category">+ Add Category</Button>
       </FormField>
       <div v-if="!show_add_category">
         <FormField>
           <label class="float-left" for="new_category">Add New Category</label>
           <InputText test-suite="input-new-category" v-model="new_category.name" placeholder="Category name"  fluid/>
-          <Button class="mt-2 ml-1 float-right" test-suite="cancel-new-category" label="Cancel"  @click="cancelAddCategory" severity="danger"/>
-          <Button class="float-right mt-2" test-suite="submit-new-category" label="Add"  @click="addCategory" severity="success" :disabled="!new_category.name"/>
+          <Button size="small" outlined class="mt-2 ml-1 float-right" test-suite="cancel-new-category" label="Cancel"  @click="cancelAddCategory" severity="info"/>
+          <Button size="small" class="float-right mt-2" test-suite="submit-new-category" label="Add"  @click="addCategory" severity="info" :disabled="!new_category.name"/>
         </FormField>
       </div>
       <FormField name="amount">
@@ -42,11 +42,22 @@
         <InputText test-suite="input-description" v-model="form.description" inputId="description" name="description" fluid />
         <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">{{ $form.description.errors }}</Message>
       </FormField>
-      <FormField>
+      <FormField class="flex gap-2 ml-4">
+        <Button
+          outlined
+          size="small"
+          severity="info"
+          test-suite="transaction-cancel"
+          class="relative left-3"
+        >
+          Cancel
+        </Button>
         <Button
           type="submit"
+          size="small"
           severity="info"
           test-suite="transaction-submit"
+          class="relative left-3"
         >
           Add Transaction
         </Button>

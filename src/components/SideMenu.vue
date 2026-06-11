@@ -56,7 +56,7 @@ const showTransactionForm = () => {
         props: {
             header: 'New Transaction',
             style: {
-                width: '25vw',
+                width: '22vw',
             },
             breakpoints:{
                 '960px': '75vw',
