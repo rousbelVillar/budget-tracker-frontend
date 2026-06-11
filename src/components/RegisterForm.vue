@@ -66,7 +66,6 @@ const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const localErrorValue = ref("");
-const telephone = ref("");
 
 const auth = useAuthStore();
 const isLoading = computed(() => auth.isLoading);
