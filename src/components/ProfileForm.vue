@@ -1,9 +1,11 @@
 <template>
     <div>
-      <div>
+      <div class="relative right-[35%]">
         <Avatar v-if="image" class="relative left-[9vw]" :image="image" shape="circle" size="xlarge"></Avatar>
         <Avatar v-else class="relative left-[9vw]" image="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" shape="circle" size="xlarge"></Avatar>
-        <Button name="edit" class="relative left-[117px] bottom-[41px] " size="small" severity="info" icon="pi pi-pencil" rounded aria-label="Filter" />
+        <Button name="edit" class="relative left-[67%] bottom-[5vh] " size="small" severity="info" icon="pi pi-pencil" rounded aria-label="Filter" />
+      </div>  
+      <div>
         <label for="name" class="flex">Name</label>
         <InputText id="name" v-model="name" class="w-full" required />
       </div>
@@ -30,10 +32,9 @@ const image = ref("");
 const authStore = useAuthStore();
 
 onMounted(async () => {
-  name.value = authStore.user?.name as string;
-  lastName.value = authStore.user?.lastName as string;  
-  image.value = authStore.user?.profileImage as string;
-  console.log(image.value);
+  name.value = authStore.user?.name as string ?? '';
+  lastName.value = authStore.user?.lastName as string ?? '';  
+  image.value = authStore.user?.profileImage as string ?? '';
 })
 
 </script>

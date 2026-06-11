@@ -22,7 +22,7 @@
         <Message v-if="$form.category?.invalid" severity="error" size="small" variant="simple">{{ $form.category.errors }}</Message>
       </FormField>
       <FormField>
-        <Button size="small" test-suite="add-new-category" severity="info" class="relative left-[5em] float-left" @click="show_add_category =!show_add_category">+ Add Category</Button>
+        <Button size="small" test-suite="add-new-category" severity="info" class="relative left-[5vw] float-left" @click="show_add_category =!show_add_category">+ Add Category</Button>
       </FormField>
       <div v-if="!show_add_category">
         <FormField>
