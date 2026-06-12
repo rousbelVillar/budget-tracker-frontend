@@ -35,10 +35,11 @@
           required
         ></Password>
       </div>
-      <label for="confirmPassword" class="flex">Profile Image</label>
-      <div class="flex">
-        <FileUpload @get-file="getImage"/>
+      <div class="flex gap-1 ">
+        <label for="confirmPassword">Profile Picture</label>
+        <FileUpload class="align-selft" @get-file="getImage"/>
       </div>
+      <Message v-if="selectedFile" class="mt-5 mb-5" size="small" icon="pi pi-images">Image Ready</Message>     
       <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
       <Button
         type="submit"
@@ -55,7 +56,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useAuthStore } from "../store/Auth";
-import { Button, InputText, Password, Toast } from "primevue";
+import { Button, InputText, Password, Toast , Message} from "primevue";
 import { useRouter } from "vue-router";
 import { User} from "../store/Auth";
 import FileUpload from "./FileUpload.vue";
