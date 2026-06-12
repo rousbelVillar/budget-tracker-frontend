@@ -73,7 +73,7 @@ const showProfileForm = () => {
         props: {
             header: 'User Settings',
             style: {
-                width: '25%',
+                width: '22%',
             },
             breakpoints:{
                 '960px': '75vw',
