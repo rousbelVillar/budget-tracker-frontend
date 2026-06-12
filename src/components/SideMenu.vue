@@ -56,7 +56,7 @@ const showTransactionForm = () => {
         props: {
             header: 'New Transaction',
             style: {
-                width: '14vw',
+                width: '14%',
             },
             breakpoints:{
                 '960px': '75vw',
@@ -73,7 +73,7 @@ const showProfileForm = () => {
         props: {
             header: 'User Settings',
             style: {
-                width: '15vw',
+                width: '25%',
             },
             breakpoints:{
                 '960px': '75vw',
