@@ -37,7 +37,7 @@
       </div>
       <div class="flex gap-1 ">
         <label for="confirmPassword">Profile Picture</label>
-        <FileUpload class="align-selft" @get-file="getImage"/>
+        <FileUpload @get-file="getImage"/>
       </div>
       <Message v-if="selectedFile" class="mt-5 mb-5" size="small" icon="pi pi-images">Image Ready</Message>     
       <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
@@ -58,7 +58,6 @@ import { computed, ref } from "vue";
 import { useAuthStore } from "../store/Auth";
 import { Button, InputText, Password, Toast , Message} from "primevue";
 import { useRouter } from "vue-router";
-import { User} from "../store/Auth";
 import FileUpload from "./FileUpload.vue";
 
 const name = ref("");
@@ -84,12 +83,12 @@ const onSubmit = async () => {
     auth.error = "Passwords do not match";
     return;
   }
-  const user:User = {
+  auth.user = {
     email:email.value,
     name:name.value,
     lastName: lastName.value
   }   
-  await auth.register(user,password.value,selectedFile.value);
+  await auth.register(password.value,selectedFile.value);
   router.push("/dashboard");
 };
 </script>
