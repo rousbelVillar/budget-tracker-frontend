@@ -79,16 +79,18 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async register(user: User, password: string, profile_pic: any) {
+    async register(password: string, profile_pic: any) {
       this.isLoading = true;
       this.error = null;
 
       try {
         const formData = new FormData();
-        formData.append("email", user.email);
-        formData.append("password", password);
-        formData.append("lastName", user.lastName);
-        formData.append("name", user.name);
+        if (this.user) {
+          formData.append("email", this.user.email);
+          formData.append("password", password);
+          formData.append("lastName", this.user.lastName);
+          formData.append("name", this.user.name);
+        }
 
         if (profile_pic) {
           formData.append("profile_pic", profile_pic);
@@ -105,6 +107,33 @@ export const useAuthStore = defineStore("auth", {
       } catch (err: any) {
         this.error = err.response?.data?.message || "Registration failed";
         this.authenticated = false;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    async update_profile(password?: string) {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const formData = new FormData();
+        if (this.user) {
+          formData.append("email", this.user.email);
+          formData.append("password", password ?? "");
+          formData.append("lastName", this.user.lastName);
+          formData.append("name", this.user.name);
+        }
+        const res = await API.post("/auth/profile/update", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        this.user = res.data;
+        this.authenticated = true;
+
+        return true;
+      } catch (err: any) {
+        this.error = err.response?.data?.message || "User update has failed";
       } finally {
         this.isLoading = false;
       }
