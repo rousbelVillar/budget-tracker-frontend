@@ -7,7 +7,7 @@ export class AuthBuilder {
     this.user = user;
   }
 
-  public buildAuthForm(password?: string, profilePic?: any): FormData {
+  public buildAuthForm(password?: string, profilePic?: File): FormData {
     const formData = new FormData();
     if (!this.user) {
       this.error = "No Update Data Found.";

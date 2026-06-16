@@ -3,7 +3,7 @@
       <form @submit.prevent="onSubmit" class="space-y-4 p-5">
         <div class="flex align-middle justify-center">
           <Avatar v-if="image" :image="image" shape="circle" size="xlarge"></Avatar>
-          <Avatar v-else class="relative left-[9vw]" image="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" shape="circle" size="xlarge"></Avatar>
+          <Avatar v-else image="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" shape="circle" size="xlarge"></Avatar>
           <FileUpload @get-file="getImage"/>
         </div>  
         <div>
@@ -78,7 +78,12 @@ const onSubmit = async () => {
     lastName : lastName.value,
     email : ""
   }
-  auth.update_profile("newpassword")
+  if(selectedFile.value){
+    await auth.update_profile(password.value,selectedFile.value);
+  }else{
+    await auth.update_profile(password.value);
+  }
+  dialogRef.value.close();
 };
 
 </script>

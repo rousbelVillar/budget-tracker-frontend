@@ -73,7 +73,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async register(password: string, profilePic?: any) {
+    async register(password: string, profilePic?: File) {
       this.isLoading = true;
       this.error = null;
 
@@ -97,7 +97,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async update_profile(password: string, profilePic?: any) {
+    async update_profile(password: string, profilePic?: File) {
       this.isLoading = true;
       this.error = null;
 

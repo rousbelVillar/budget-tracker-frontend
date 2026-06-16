@@ -88,7 +88,11 @@ const onSubmit = async () => {
     name:name.value,
     lastName: lastName.value
   }   
-  await auth.register(password.value,selectedImage.value);
+  if(selectedImage.value){
+    await auth.register(password.value,selectedImage.value);
+  }else{
+    await auth.register(password.value);
+  }
   router.push("/dashboard");
 };
 </script>
