@@ -39,7 +39,7 @@
         <label for="confirmPassword">Profile Picture</label>
         <FileUpload @get-file="getImage"/>
       </div>
-      <Message v-if="selectedFile" class="mt-5 mb-5" size="small" icon="pi pi-images">Image Ready</Message>     
+      <Message v-if="selectedImage" class="mt-5 mb-5" size="small" icon="pi pi-images">Image Ready</Message>     
       <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
       <Button
         type="submit"
@@ -71,10 +71,10 @@ const auth = useAuthStore();
 const isLoading = computed(() => auth.isLoading);
 const error = computed(() => auth.error);
 const router = useRouter();
-const selectedFile = ref<File | null>(null);
+const selectedImage = ref<File | null>(null);
 
 function getImage(file: File) {
-  selectedFile.value = file;
+  selectedImage.value = file;
 }
 
 const onSubmit = async () => {
@@ -88,7 +88,7 @@ const onSubmit = async () => {
     name:name.value,
     lastName: lastName.value
   }   
-  await auth.register(password.value,selectedFile.value);
+  await auth.register(password.value,selectedImage.value);
   router.push("/dashboard");
 };
 </script>

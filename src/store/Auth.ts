@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import API from "../api";
 import { getCookie } from "../globals/globals";
+import { AuthBuilder } from "./AuthBuilder";
 
 export interface User {
   id?: number;
@@ -38,15 +39,8 @@ export const useAuthStore = defineStore("auth", {
           withCredentials: true,
         });
         this.user = res.data as User;
-        this.user.name = this.user.name.replace(
-          this.user.name.charAt(0),
-          this.user.name.charAt(0).toUpperCase(),
-        );
-        this.user.lastName = this.user.lastName.replace(
-          this.user.lastName.charAt(0),
-          this.user.lastName.charAt(0).toUpperCase(),
-        );
-
+        const authBuilder: AuthBuilder = new AuthBuilder(this.user);
+        authBuilder.formatUser();
         return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Failed to fetch user";
@@ -79,31 +73,22 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async register(password: string, profile_pic: any) {
+    async register(password: string, profilePic?: any) {
       this.isLoading = true;
       this.error = null;
 
       try {
-        const formData = new FormData();
         if (this.user) {
-          formData.append("email", this.user.email);
-          formData.append("password", password);
-          formData.append("lastName", this.user.lastName);
-          formData.append("name", this.user.name);
+          const authBuilder: AuthBuilder = new AuthBuilder(this.user);
+          const formData = authBuilder.buildAuthForm(password, profilePic);
+          const res = await API.post("/auth/register", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+
+          this.user = res.data;
+          this.authenticated = true;
+          return true;
         }
-
-        if (profile_pic) {
-          formData.append("profile_pic", profile_pic);
-        }
-
-        const res = await API.post("/auth/register", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        this.user = res.data;
-        this.authenticated = true;
-
-        return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "Registration failed";
         this.authenticated = false;
@@ -112,26 +97,21 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async update_profile(password?: string) {
+    async update_profile(password: string, profilePic?: any) {
       this.isLoading = true;
       this.error = null;
 
       try {
-        const formData = new FormData();
         if (this.user) {
-          formData.append("email", this.user.email);
-          formData.append("password", password ?? "");
-          formData.append("lastName", this.user.lastName);
-          formData.append("name", this.user.name);
+          const authBuilder: AuthBuilder = new AuthBuilder(this.user);
+          const formData = authBuilder.buildAuthForm(password, profilePic);
+          const res = await API.post("/auth/profile/update", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          this.user = res.data;
+          await this.fetchProfile();
+          return true;
         }
-        const res = await API.post("/auth/profile/update", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        this.user = res.data;
-        this.authenticated = true;
-
-        return true;
       } catch (err: any) {
         this.error = err.response?.data?.message || "User update has failed";
       } finally {
@@ -142,7 +122,6 @@ export const useAuthStore = defineStore("auth", {
     async logout() {
       this.isLoading = true;
       this.error = null;
-
       try {
         await API.post("/auth/logout", {}, { withCredentials: true });
         this.authenticated = false;
