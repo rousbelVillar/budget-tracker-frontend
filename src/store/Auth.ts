@@ -87,7 +87,6 @@ export const useAuthStore = defineStore("auth", {
 
           this.user = res.data;
           this.authenticated = true;
-
           return true;
         }
       } catch (err: any) {
@@ -110,7 +109,7 @@ export const useAuthStore = defineStore("auth", {
             headers: { "Content-Type": "multipart/form-data" },
           });
           this.user = res.data;
-          this.authenticated = true;
+          await this.fetchProfile();
           return true;
         }
       } catch (err: any) {
