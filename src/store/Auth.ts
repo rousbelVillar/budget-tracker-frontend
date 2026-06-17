@@ -2,11 +2,11 @@ import { defineStore } from "pinia";
 import API from "../api";
 import { getCookie } from "../globals/globals";
 import { AuthBuilder } from "./AuthBuilder";
-import { Login, User } from "../interfaces/User";
+import { Login, UserStore } from "../interfaces/User";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
-    user: null as User | null,
+    user: null as UserStore | null,
     isLoading: false,
     authenticated: false,
     error: null as string | null,
@@ -26,7 +26,7 @@ export const useAuthStore = defineStore("auth", {
           },
           withCredentials: true,
         });
-        this.user = res.data as User;
+        this.user = res.data as UserStore;
         const authBuilder: AuthBuilder = new AuthBuilder(this.user);
         authBuilder.formatUser();
         return true;
@@ -42,7 +42,7 @@ export const useAuthStore = defineStore("auth", {
         const res = await API.post(
           "/auth/login",
           {
-            email: loginInfo.emailUser,
+            email: loginInfo.email,
             password: loginInfo.password,
           },
           {

@@ -65,9 +65,9 @@ import { Button, InputText, Password, Toast , Message, useToast} from "primevue"
 import { useRouter } from "vue-router";
 import FileUpload from "./FileUpload.vue";
 import { Form, FormField } from "@primevue/forms";
-import { registrationResolver, registrationValidation } from "../validation/registrationResolvers";
-import { UserForm } from "../interfaces/User";
+import { UserSignUpForm } from "../interfaces/User";
 import { showToast } from "../globals/globals";
+import { registrationResolver, registrationValidation } from "../validation/registrationResolvers";
 
 const name = ref("");
 const lastName = ref("");
@@ -77,12 +77,12 @@ const confirmPassword = ref("");
 const localErrorValue = ref("");
 const formRef = ref();
 const toast = useToast();
-const form = reactive<UserForm>({
+const form = reactive<UserSignUpForm>({
   name : "",
   lastName : "",
   email:"",
   password:"",
-  confirmPassword:""
+  confirmPassword:"",
 });
 
 const auth = useAuthStore();

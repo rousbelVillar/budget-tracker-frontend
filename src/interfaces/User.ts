@@ -1,23 +1,25 @@
 export interface User {
-  id?: number;
   email: string;
+}
+
+export interface UserImage {
   profileImage?: File;
   profileImageUrl?: string;
+}
+
+export interface UserDetails {
   name: string;
   lastName: string;
   password?: string;
 }
 
 export interface Login {
-  emailUser: string;
-  password: string;
-}
-
-export interface UserForm {
-  name: string;
-  lastName: string;
   email: string;
   password: string;
-  confirmPassword: string;
-  profileImage?: File;
 }
+export interface UserStore extends User, UserDetails, UserImage {}
+export interface UserUpdateForm extends UserDetails, UserImage {
+  confirmPassword: string;
+}
+export interface UserSignUpForm
+  extends User, UserDetails, UserImage, UserUpdateForm {}

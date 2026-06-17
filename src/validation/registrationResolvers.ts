@@ -1,4 +1,4 @@
-import { UserForm } from "../interfaces/User";
+import { UserSignUpForm } from "../interfaces/User";
 
 export function registrationResolver(form: Record<string, any>) {
   const errors: Record<string, string> = {};
@@ -35,7 +35,7 @@ export function registrationResolver(form: Record<string, any>) {
   return hasErrors ? { values: {}, errors } : { values: form, errors: {} };
 }
 
-export function registrationValidation(form: UserForm) {
+export function registrationValidation(form: UserSignUpForm) {
   if (form.name == null) {
     return false;
   }

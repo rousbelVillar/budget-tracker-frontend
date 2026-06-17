@@ -74,7 +74,7 @@ import { TransactionForm } from '../interfaces/Transaction';
 import { Category } from '../interfaces/Category';
 import { Form, FormField} from '@primevue/forms';
 import {InputText, InputNumber, Select,Button, Message, useToast} from 'primevue';
-import { transactionValidation, transactionFormResolver } from '../validation/transactionResolvers';
+import { transactionValidation, transactionFormResolver } from '../validation/TransactionResolver';
 import { inject } from "vue";
 import { useTransactionStore } from '../store/Transactions';
 import { useCategorieStore } from '../store/Categories';
