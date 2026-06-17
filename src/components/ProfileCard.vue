@@ -2,14 +2,13 @@
     <Card v-if="user" >
       <template #title class="profile-card-title">
           <Avatar 
-            v-if="user?.profileImage"
-            :image="user.profileImage"
+            v-if="user?.profileImageUrl"
+            :image="user.profileImageUrl"
             shape="circle"
             size="xlarge"
             alt="Profile picture"
             "
             >
-
           </Avatar>
           <Avatar
             v-else

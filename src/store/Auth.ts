@@ -2,19 +2,7 @@ import { defineStore } from "pinia";
 import API from "../api";
 import { getCookie } from "../globals/globals";
 import { AuthBuilder } from "./AuthBuilder";
-
-export interface User {
-  id?: number;
-  email: string;
-  profileImage?: string;
-  name: string;
-  lastName: string;
-}
-
-export interface Login {
-  emailUser: string;
-  password: string;
-}
+import { Login, User } from "../interfaces/User";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -73,14 +61,17 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async register(password: string, profilePic?: File) {
+    async register() {
       this.isLoading = true;
       this.error = null;
 
       try {
         if (this.user) {
           const authBuilder: AuthBuilder = new AuthBuilder(this.user);
-          const formData = authBuilder.buildAuthForm(password, profilePic);
+          const formData = authBuilder.buildAuthForm(
+            this.user.password,
+            this.user.profileImage,
+          );
           const res = await API.post("/auth/register", formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
@@ -97,14 +88,17 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async update_profile(password: string, profilePic?: File) {
+    async update_profile() {
       this.isLoading = true;
       this.error = null;
 
       try {
         if (this.user) {
           const authBuilder: AuthBuilder = new AuthBuilder(this.user);
-          const formData = authBuilder.buildAuthForm(password, profilePic);
+          const formData = authBuilder.buildAuthForm(
+            this.user.password,
+            this.user.profileImage,
+          );
           const res = await API.post("/auth/profile/update", formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });

@@ -1,4 +1,4 @@
-import { User } from "./Auth";
+import { User } from "./../interfaces/User";
 
 export class AuthBuilder {
   private user: User;

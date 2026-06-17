@@ -59,9 +59,9 @@ const auth = useAuthStore();
 
 
 onMounted(async () => {
-  name.value = authStore.user?.name as string ?? '';
-  lastName.value = authStore.user?.lastName as string ?? '';  
-  image.value = authStore.user?.profileImage as string ?? '';
+  name.value = authStore.user?.name as string ?? 'Loading';
+  lastName.value = authStore.user?.lastName as string ?? 'User';  
+  image.value = authStore.user?.profileImageUrl as string ?? 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg';
 })
 
 function getImage(file: File) {
@@ -78,12 +78,7 @@ const onSubmit = async () => {
     lastName : lastName.value,
     email : ""
   }
-  if(selectedFile.value){
-    await auth.update_profile(password.value,selectedFile.value);
-  }else{
-    await auth.update_profile(password.value);
-  }
-  dialogRef.value.close();
+  await auth.update_profile();
 };
 
 </script>

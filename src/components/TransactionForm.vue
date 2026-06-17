@@ -74,7 +74,7 @@ import { TransactionForm } from '../interfaces/Transaction';
 import { Category } from '../interfaces/Category';
 import { Form, FormField} from '@primevue/forms';
 import {InputText, InputNumber, Select,Button, Message, useToast} from 'primevue';
-import { mockTransactionResolver, transactionFormResolver } from '../validation/resolvers';
+import { transactionValidation, transactionFormResolver } from '../validation/transactionResolvers';
 import { inject } from "vue";
 import { useTransactionStore } from '../store/Transactions';
 import { useCategorieStore } from '../store/Categories';
@@ -129,7 +129,7 @@ import { showToast } from '../globals/globals';
 
   const submitTransaction = async () => {
     const result = await formRef.value?.validate();
-      if(Object.keys(result.errors).length === 0 || mockTransactionResolver(form)){
+      if(Object.keys(result.errors).length === 0 || transactionValidation(form)){
         await transactionStore.addTransaction(form).
         then(()=>{
           showToast(toast,'Transaction submitted successfully.');
