@@ -2,23 +2,11 @@ import { defineStore } from "pinia";
 import API from "../api";
 import { getCookie } from "../globals/globals";
 import { AuthBuilder } from "./AuthBuilder";
-
-export interface User {
-  id?: number;
-  email: string;
-  profileImage?: string;
-  name: string;
-  lastName: string;
-}
-
-export interface Login {
-  emailUser: string;
-  password: string;
-}
+import { Login, UserStore } from "../interfaces/User";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
-    user: null as User | null,
+    user: null as UserStore | null,
     isLoading: false,
     authenticated: false,
     error: null as string | null,
@@ -38,7 +26,7 @@ export const useAuthStore = defineStore("auth", {
           },
           withCredentials: true,
         });
-        this.user = res.data as User;
+        this.user = res.data as UserStore;
         const authBuilder: AuthBuilder = new AuthBuilder(this.user);
         authBuilder.formatUser();
         return true;
@@ -54,7 +42,7 @@ export const useAuthStore = defineStore("auth", {
         const res = await API.post(
           "/auth/login",
           {
-            email: loginInfo.emailUser,
+            email: loginInfo.email,
             password: loginInfo.password,
           },
           {
@@ -73,14 +61,17 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async register(password: string, profilePic?: any) {
+    async register() {
       this.isLoading = true;
       this.error = null;
 
       try {
         if (this.user) {
           const authBuilder: AuthBuilder = new AuthBuilder(this.user);
-          const formData = authBuilder.buildAuthForm(password, profilePic);
+          const formData = authBuilder.buildAuthForm(
+            this.user.password,
+            this.user.profileImage,
+          );
           const res = await API.post("/auth/register", formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
@@ -97,14 +88,17 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    async update_profile(password: string, profilePic?: any) {
+    async update_profile() {
       this.isLoading = true;
       this.error = null;
 
       try {
         if (this.user) {
           const authBuilder: AuthBuilder = new AuthBuilder(this.user);
-          const formData = authBuilder.buildAuthForm(password, profilePic);
+          const formData = authBuilder.buildAuthForm(
+            this.user.password,
+            this.user.profileImage,
+          );
           const res = await API.post("/auth/profile/update", formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
