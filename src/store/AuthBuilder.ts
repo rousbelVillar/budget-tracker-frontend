@@ -1,9 +1,9 @@
-import { User } from "./../interfaces/User";
+import { User, UserStore } from "./../interfaces/User";
 
 export class AuthBuilder {
-  private user: User;
+  private user: UserStore;
   private error: string = "";
-  public constructor(user: User) {
+  public constructor(user: UserStore) {
     this.user = user;
   }
 

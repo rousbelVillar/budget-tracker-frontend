@@ -2,7 +2,6 @@
     <Card v-if="user" >
       <template #title class="profile-card-title">
           <Avatar 
-            v-if="user?.profileImageUrl"
             :image="user.profileImageUrl"
             shape="circle"
             size="xlarge"
@@ -10,12 +9,6 @@
             "
             >
           </Avatar>
-          <Avatar
-            v-else
-            image="https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-            shape="circle"
-            size="xlarge"
-          />
           <h2 class="text-lg font-semibold">{{ (user?.name) + " " + (user?.lastName)}}</h2> 
       </template>
     </Card>
