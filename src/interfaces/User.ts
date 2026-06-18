@@ -1,8 +1,7 @@
 export interface User {
   email: string;
 }
-
-export interface Login extends User {
+export interface UserSecurity {
   password: string;
 }
 
@@ -11,15 +10,16 @@ export interface UserImage {
   profileImageUrl?: string;
 }
 
-export interface UserDetails {
+export interface UserDetails extends UserSecurity {
   name: string;
   lastName: string;
-  password?: string;
 }
 
-export interface UserStore extends User, UserDetails, UserImage {}
 export interface UserUpdateForm extends UserDetails, UserImage {
   confirmPassword: string;
 }
+
+export interface UserStore extends User, UserDetails, UserImage {}
+export interface Login extends User, UserSecurity {}
 export interface UserSignUpForm
   extends User, UserDetails, UserImage, UserUpdateForm {}

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form ref="formRef" :validateOnValueUpdate="true" :validateOnBlur="true" v-slot="$form" :resolver="transactionFormResolver" @submit="submitTransaction" class="flex flex-col gap-4 w-full md:w-56">
+    <Form ref="formRef" :validateOnValueUpdate="true" :validateOnBlur="true" v-slot="$form" :resolver="transactionResolver.formResolver" @submit="submitTransaction" class="flex flex-col gap-4 w-full md:w-56">
       <FormField name="type" initial-value="">
         <label class="float-left" for="type">Type</label>
         <Select 
@@ -74,13 +74,11 @@ import { TransactionForm } from '../interfaces/Transaction';
 import { Category } from '../interfaces/Category';
 import { Form, FormField} from '@primevue/forms';
 import {InputText, InputNumber, Select,Button, Message, useToast} from 'primevue';
-import { transactionValidation, transactionFormResolver } from '../validation/TransactionResolver';
 import { inject } from "vue";
 import { useTransactionStore } from '../store/Transactions';
 import { useCategorieStore } from '../store/Categories';
 import { showToast } from '../globals/globals';
-
-
+import { TransactionResolver } from '../validation/TransactionResolver';
   const categoriesStore = useCategorieStore()
   const categories = computed(()=> categoriesStore.categories);
   const show_add_category = ref(true);
@@ -100,7 +98,8 @@ import { showToast } from '../globals/globals';
   ]);
   const toast = useToast();
   const dialogRef:any = inject('dialogRef');
-  const transactionStore = useTransactionStore()
+  const transactionStore = useTransactionStore();
+  const transactionResolver = new TransactionResolver()
 
 
   const addCategory =  async () => {
@@ -129,7 +128,7 @@ import { showToast } from '../globals/globals';
 
   const submitTransaction = async () => {
     const result = await formRef.value?.validate();
-      if(Object.keys(result.errors).length === 0 || transactionValidation(form)){
+      if(Object.keys(result.errors).length === 0 || transactionResolver.transactionValidation(form)){
         await transactionStore.addTransaction(form).
         then(()=>{
           showToast(toast,'Transaction submitted successfully.');

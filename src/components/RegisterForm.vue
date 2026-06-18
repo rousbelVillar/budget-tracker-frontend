@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-md mx-auto p-5 shadow-md rounded-xl bg-white">
     <h2 class="text-2xl font-bold mb-4">Create an account</h2>
-    <Form ref="formRef" :validateOnValueUpdate="true" :validateOnBlur="true" v-slot="$form" :resolver="registrationResolver" @submit="onSubmit" class="space-y-4 p-5">
+    <Form ref="formRef" :validateOnValueUpdate="true" :validateOnBlur="true" v-slot="$form" :resolver="registrationResolver.formResolver" @submit="onSubmit" class="space-y-4 p-5">
       <FormField name="name">
         <label for="name" class="flex">Name</label>
         <InputText test-suite="input-name" id="name" v-model="name" class="w-full" fluid/>
@@ -67,7 +67,7 @@ import FileUpload from "./FileUpload.vue";
 import { Form, FormField } from "@primevue/forms";
 import { UserSignUpForm } from "../interfaces/User";
 import { showToast } from "../globals/globals";
-import { registrationResolver, registrationValidation } from "../validation/registrationResolvers";
+import { RegistrationResolver } from "../validation/RegistrationResolver";
 
 const name = ref("");
 const lastName = ref("");
@@ -90,6 +90,7 @@ const isLoading = computed(() => auth.isLoading);
 const error = computed(() => auth.error);
 const router = useRouter();
 const selectedImage = ref<File | null>(null);
+const registrationResolver = new RegistrationResolver()
 
 function getImage(file: File) {
   selectedImage.value = file;
@@ -97,7 +98,7 @@ function getImage(file: File) {
 
 const onSubmit = async () => {
   const result = await formRef.value?.validate();
-  if(Object.keys(result.errors).length === 0 || registrationValidation(form)){
+  if(Object.keys(result.errors).length === 0 || registrationResolver.registrationValidation(form)){
       localErrorValue.value = "";
       auth.user = {
         email:email.value,
