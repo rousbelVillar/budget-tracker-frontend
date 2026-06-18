@@ -2,6 +2,10 @@ export interface User {
   email: string;
 }
 
+export interface Login extends User {
+  password: string;
+}
+
 export interface UserImage {
   profileImage?: File;
   profileImageUrl?: string;
@@ -13,10 +17,6 @@ export interface UserDetails {
   password?: string;
 }
 
-export interface Login {
-  email: string;
-  password: string;
-}
 export interface UserStore extends User, UserDetails, UserImage {}
 export interface UserUpdateForm extends UserDetails, UserImage {
   confirmPassword: string;
