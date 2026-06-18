@@ -42,7 +42,7 @@ const password = ref("");
 
 const authStore = useAuthStore();
 const {login, isLoading, error} = authStore;
-const router = useRouter()
+const router = useRouter();
 
 
 const handleLogin = async ()=>{
