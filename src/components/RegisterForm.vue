@@ -90,7 +90,7 @@ const isLoading = computed(() => auth.isLoading);
 const error = computed(() => auth.error);
 const router = useRouter();
 const selectedImage = ref<File | null>(null);
-const registrationResolver = new RegistrationResolver()
+const registrationResolver = ref<RegistrationResolver>(new RegistrationResolver);
 
 function getImage(file: File) {
   selectedImage.value = file;
@@ -98,7 +98,7 @@ function getImage(file: File) {
 
 const onSubmit = async () => {
   const result = await formRef.value?.validate();
-  if(Object.keys(result.errors).length === 0 || registrationResolver.registrationValidation(form)){
+  if(Object.keys(result.errors).length === 0 || registrationResolver.value.registrationValidation(form)){
       localErrorValue.value = "";
       auth.user = {
         email:email.value,

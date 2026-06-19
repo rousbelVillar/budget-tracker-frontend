@@ -1,6 +1,6 @@
 <template>
     <div>
-      <Form class="space-y-4 p-5" @submit.prevent="onSubmit"  ref="formRef" :validateOnValueUpdate="true" :validateOnBlur="true" v-slot="$form" :resolver="registrationResolver" @submit="onSubmit">
+      <Form class="space-y-4 p-5" @submit.prevent="onSubmit"  ref="formRef" :validateOnValueUpdate="true" :validateOnBlur="true" v-slot="$form" :resolver="registrationResolver.formResolver">
         <FormField class="flex align-middle justify-center">
           <Avatar :image="image" shape="circle" size="xlarge"></Avatar>
           <FileUpload @get-file="getImage"/>
@@ -8,6 +8,7 @@
         <FormField name="name">
           <label for="name" class="flex mt-4">Name</label>
           <InputText id="name" v-model="name" class="w-full" />
+          <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{ $form.name.errors }}</Message>
         </FormField>
         <FormField>
           <label for="lastName" class="flex mt-4">Last Name</label>
@@ -46,6 +47,7 @@ import { useAuthStore } from '../store/Auth';
 import FileUpload from './FileUpload.vue';
 import { Form, FormField } from '@primevue/forms';
 import { UserUpdateForm } from '../interfaces/User';
+import { RegistrationResolver } from '../validation/RegistrationResolver';
 
 const name = ref("");
 const lastName = ref("");
@@ -55,6 +57,7 @@ const confirmPassword = ref("");
 const authStore = useAuthStore();
 const dialogRef:any = inject('dialogRef');
 const selectedFile = ref<File | null>(null);
+const registrationResolver = ref<RegistrationResolver>(new RegistrationResolver())
 const auth = useAuthStore();
 const formRef = ref();
 
@@ -68,8 +71,9 @@ const form = reactive<UserUpdateForm>({
 
 
 onMounted(async () => {
-  name.value = authStore.user?.name as string ?? 'Loading';
-  lastName.value = authStore.user?.lastName as string ?? 'User';  
+  form.name =  authStore.user?.name as string;
+  name.value = authStore.user?.name as string;
+  form.lastName = authStore.user?.lastName as string ?? 'User';  
   image.value = authStore.user?.profileImageUrl as string ?? 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg';
 })
 
@@ -82,12 +86,18 @@ const closeDialog = () => {
 }
 
 const onSubmit = async () => {
-  auth.user = {
-    name : name.value,
-    lastName : lastName.value,
-    email : ""
+  const result = await formRef.value?.validate();
+  if(auth.user){
+    auth.user.name = name.value;
+    auth.user.lastName = lastName.value;
+    auth.user.password = password.value;
+    if(selectedFile.value){
+      auth.user.profileImage = selectedFile.value;
+    }
+    if(Object.keys(result.errors).length === 0 || registrationResolver.value.formResolver(form)){
+      await auth.update_profile();
+    }
   }
-  await auth.update_profile();
 };
 
 </script>
